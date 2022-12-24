@@ -1,12 +1,19 @@
-from Editor.EditorRegister import EditorRegister
-
+import networkx as nx
+from Editor.EditorRegister import EditorRegister as EdReg
+from Structure.Vec2 import Vec2
 def pan(hkhandler):
-    if (len(hkhandler.hover_list) != 0 
-        and len(hkhandler.hover_list["main"]["node"]) == 0
-        and hkhandler.is_dragging
-        ):
-        print("pan!!!")
-    
+    for window in hkhandler.hover_list:
+        if (len(hkhandler.hover_list) != 0 
+            and len(hkhandler.hover_list[window]["node"]) == 0
+            ):
+            for ed in EdReg.editors.values():
+                if hkhandler.press:
+                    ed.prev_offset = ed.offset
+                if hkhandler.is_dragging:
+                    if ed.window == window:
+                        ed.set_camera(ed.scale, ed.prev_offset - Vec2(hkhandler.press_pos) + Vec2(hkhandler.pos))
+            print("pan!!!")
+
 def drag_node(hkhandler):
     pass
 

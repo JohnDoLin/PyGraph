@@ -15,18 +15,18 @@ edge_dfhl = (255,0,255,255)
 def hl_node(ed, nodes, hl:tuple = node_dfhl): # highlights a node, or nodes in a list
     if type(nodes) == list:
         for node in nodes:
-            ed.node_dict[node].toggle_highlight()
+            ed.node_dict[node].set_style(color = hl)
     else:
-        ed.node_dict[nodes].toggle_highlight()
+        ed.node_dict[nodes].set_style(color = hl)
     return None
     
 def hl_edge(ed, edges, hl:tuple = node_dfhl): # highlights an edge, or edges in a list
     if type(edges) == list:
         for edge in edges:
             edge = frozenset({edge[0], edge[1]})
-            ed.edge_dict[edge].toggle_highlight()
+            ed.edge_dict[edge].set_style(color = hl)
     else:
-        ed.edge_dict[edges].toggle_highlight()
+        ed.edge_dict[edges].set_style(color = hl)
     return None
     
 

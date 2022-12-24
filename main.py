@@ -2,18 +2,13 @@ import dearpygui.dearpygui as dpg
 from Editor.HKHandler import HKHandler
 from Editor.Hotkey import Hotkey
 from Editor.EditorRegister import EditorRegister
-import Core.algorithms as alg
 from Editor.Actions import action_func_dict
 from Editor.Keybinds import action_dict
-
-
+import networkx as nx 
+import Core.algorithms as alg
 dpg.create_context()
 dpg.create_viewport()
 dpg.setup_dearpygui()
-
-################# Hotkeys and Mouse #################
-
-
 
 ################# GUI #################
 ## GUI::Main ##
@@ -44,8 +39,9 @@ with dpg.window(label="Primary", tag="primary", width = 1000, height=600):
 
 ################# Editor Register #################
 ed_reg = EditorRegister()
+# g = nx.cycle_graph(5)
 main_ed = ed_reg.add_editor(window="main")
-
+main_ed.set_camera(1, [0, 0])
 main_ed.add_node(1, pos=[0, 0], color = (0, 0, 255))
 main_ed.add_node(2, pos=[700, 400], color = (0, 255, 255))
 main_ed.add_node(3, pos=[300, 500], color = (0, 255, 0))
@@ -61,7 +57,6 @@ main_ed.add_edge(1,4)
 # write a piece of code that generates colors?
 
 ### test algoritms ###
-
 tested = False
 def test_alg():
     alg.hl_shortest_path(main_ed,3,4)
@@ -73,7 +68,6 @@ def test_alg():
 #### Actions and HotKeys
 hkhandler = HKHandler()
 
-
 ################# Main Loop #################
 dpg.show_viewport()
 dpg.set_primary_window("primary", True)
@@ -84,11 +78,12 @@ while dpg.is_dearpygui_running():
             if hkhandler.is_hk_active(hk):
                 action_func_dict[action](hkhandler)
     
-    for ed in ed_reg.editors:
+    for ed in ed_reg.editors.values():
         ed.update_window()
-    if not tested:
-        tested = True
-        test_alg()
+        # print("out offset", main_ed.offset)
+    # if not tested:
+    #     tested = True
+    #     test_alg()
     dpg.render_dearpygui_frame()
 
 dpg.destroy_context()

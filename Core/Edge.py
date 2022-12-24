@@ -18,9 +18,9 @@ class Edge:
         self.created = created
         self.style = {"color": color}
 
-    def draw_edge(self, window: str, scale: float = 1):
-        pos1_array = self.start.pos.to_precision_array(8)
-        pos2_array = self.end.pos.to_precision_array(8)
+    def draw_edge(self, window: str, scale: float = 1, offset: Vec2 = Vec2(0, 0)):
+        pos1_array = (self.start.pos + offset).to_precision_array(8)
+        pos2_array = (self.end.pos + offset).to_precision_array(8)
         if self.created:
             dpg.configure_item(self.uuid, p1 = pos1_array, p2 = pos2_array, color = self.style["color"], thickness= Edge.edge_thickness * scale)
         else:

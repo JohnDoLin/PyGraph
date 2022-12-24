@@ -1,6 +1,7 @@
 from Structure.Vec2 import Vec2 
 import dearpygui.dearpygui as dpg
 import uuid as UUID
+import random
 
 
 class Node:
@@ -8,8 +9,9 @@ class Node:
     default_color = (255, 255, 255)
     default_highlighted_color = (255,0,255)
     
-    def __init__(self, pos = [0, 0], vel = [0, 0], uuid = None, updated = True, created = False, color = default_color):
-        self.pos = Vec2(pos)
+    def __init__(self, pos = None, vel = [0, 0], uuid = None, updated = True, created = False, color = default_color):
+        if pos == None: self.pos = Vec2(random.random()*100, random.random()*100) 
+        else: self.pos = Vec2(pos)
         self.vel = vel
         self.uuid = uuid 
         if uuid == None: self.uuid = str((UUID.uuid4()).int)[:8]
@@ -17,8 +19,8 @@ class Node:
         self.created = created
         self.style = {"color": color}
 
-    def draw_node(self, window: str, scale: float = 1):
-        pos_array = self.pos.to_precision_array(8)
+    def draw_node(self, window: str, scale: float = 1, offset: Vec2 = Vec2([0, 0])):
+        pos_array = (self.pos + offset).to_precision_array(8)
         if self.created:
             dpg.configure_item(self.uuid, center=pos_array, fill = self.style["color"])
         else:

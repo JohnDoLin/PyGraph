@@ -2,6 +2,7 @@ import dearpygui.dearpygui as dpg
 import Editor.Hotkey as Hotkey
 from Editor.EditorRegister import EditorRegister as Edreg
 import time
+from Structure.Vec2 import Vec2
 
 class HKHandler:
     dragging_threashold = 0.1
@@ -24,6 +25,8 @@ class HKHandler:
         self.release = False
         self.release_pos = None
         self.release_tp = None
+
+        self.delta = [0, 0]
 
     def update(self):
         # Global -- kbd
@@ -64,15 +67,17 @@ class HKHandler:
         # Global -- mouse dragging
         # self.delta = dpg.get_mouse_drag_delta() ## Bad :(
         self.is_dragging = False
-        if dpg.is_mouse_button_dragging(HKHandler.dragging_mouse_btn, HKHandler.dragging_threashold):
+        # if dpg.is_mouse_button_dragging(HKHandler.dragging_mouse_btn, HKHandler.dragging_threashold):
+        if self.down and (Vec2(self.press_pos) - Vec2(self.pos)).norm() >= HKHandler.dragging_threashold:  
             self.is_dragging = True
+            self.deltadelta = [self.pos[0] - self.press_pos[0] - self.delta[0], self.pos[1] - self.press_pos[1] - self.delta[1]]
             self.delta = [self.pos[0] - self.press_pos[0], self.pos[1] - self.press_pos[1]]
 
 
         # Global -- mouse hovering
         self.hover_list = dict()
         # Window
-        for ed in Edreg.editors:
+        for ed in Edreg.editors.values():
             window = ed.window
             p = self.pos
             sz = dpg.get_item_rect_size(window)

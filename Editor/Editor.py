@@ -31,6 +31,7 @@ class Editor:
                     if node != n2: # Not needed?
                         new_vel += (self.node_dict[n2].pos-self.node_dict[node].pos).normalized() * fs.attraction(self.node_dict[node].pos, self.node_dict[n2].pos)
                         new_vel += (self.node_dict[node].pos-self.node_dict[n2].pos).normalized() * fs.repulsion(self.node_dict[node].pos, self.node_dict[n2].pos)
+                # new_vel *= 0.5
                 self.node_dict[node].vel = new_vel
                 self.node_dict[node].pos += new_vel*dt
                 self.node_dict[node].updated = True
@@ -62,7 +63,7 @@ class Editor:
             if not edge.updated:
                 pop_list.append(node_pair)
             else:
-                edge.draw_edge(window = self.window, scale = self.scale)
+                edge.draw_edge(window = self.window, scale = self.scale, offset = self.offset)
             edge.updated = False
         for np in pop_list:
             self.edge_dict.pop(np)
@@ -72,7 +73,7 @@ class Editor:
             if not nd.updated:
                 self.node_dict.pop(nd)
             else:
-                nd.draw_node(window = self.window, scale = self.scale)
+                nd.draw_node(window = self.window, scale = self.scale, offset = self.offset)
             nd.updated = False
 
     def add_node(self, node, pos = [0,0], **kargs):
