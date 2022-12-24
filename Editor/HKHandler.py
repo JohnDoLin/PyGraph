@@ -28,6 +28,15 @@ class HKHandler:
 
         self.delta = [0, 0]
 
+        self.wheel_sum = 0
+        self.wheel_speed = 0
+        self.is_wheel_updated = False
+
+    def update_wheel(self, sender, data):
+        # print("data", data)
+        # self.is_wheel_updated = True
+        self.wheel_sum += data
+
     def update(self):
         # Global -- kbd
         self.kbd = set()
@@ -62,6 +71,11 @@ class HKHandler:
             self.release = True
 
         # Global -- mouse wheel
+        self.is_wheel_updated = False
+        if self.wheel_sum != 0:
+            self.wheel_speed = self.wheel_sum
+            self.is_wheel_updated = True
+        self.wheel_sum = 0
 
 
         # Global -- mouse dragging
@@ -104,7 +118,13 @@ class HKHandler:
         #     print("kbd", self.kbd)
 
     def is_hk_active(self, hk: Hotkey):
-        if (len(self.mouse)!=0 or len(self.kbd)!=0) and (self.mouse >= hk.mouse) and (self.kbd >= hk.kbd):
+        if (
+            True # (len(self.mouse)!=0 or len(self.kbd)!=0)
+            and (self.mouse >= hk.mouse)
+            and (self.kbd >= hk.kbd)
+            # and hk.wheel
+            and (not hk.wheel or self.is_wheel_updated)
+            ):
             return True
         return False
 

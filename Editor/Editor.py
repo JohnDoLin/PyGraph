@@ -51,7 +51,6 @@ class Editor:
             # OK that was a really dumb idea. Let's use frozenset instead.
             node_fs = frozenset({node_pair[0], node_pair[1]})
             if node_fs not in self.edge_dict:
-                # print(node_fs, "is not in edge_dict")
                 self.add_edge(node_pair[0], node_pair[1])
             else:
                 self.edge_dict[node_fs].updated = True
