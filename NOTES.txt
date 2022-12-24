@@ -1,0 +1,86 @@
+2022.12.17 
+    progress
+        - add edges
+            - edges should appear below the nodes, to be fixed
+        - add color property to nodes & edges
+            - key of edge_dict is a frozenset (unordered & hashable)
+        - algorithms.py
+            - ed for editor, in place of nx.graph
+            - returns math.inf (instead of error) when the graph is not connected
+
+    ideas(?)
+        - show labels
+        - write a piece of code that generates colors
+
+
+
+################# Notes #################
+    # enum MouseNames {
+    #     MOUSE_BUTTON_NONE = 0,
+    #     MOUSE_BUTTON_LEFT = 1 << 0,
+    #     MOUSE_BUTTON_RIGHT = 1 << 1,
+    #     MOUSE_BUTTON_MIDDLE = 1 << 2,
+    #     MOUSE_BUTTON_FOUR = 1 << 3,
+    #     MOUSE_BUTTON_FIVE = 1 << 4,
+    #     MOUSE_SCROLL_UP = 1 << 5,
+    #     MOUSE_SCROLL_DOWN = 1 << 6,
+    #     MOUSE_SCROLL_LEFT = 1 << 7,
+    #     MOUSE_SCROLL_RIGHT = 1 << 8,
+    # };
+
+    # enum Conditions {
+    #     COND_VOID = 0,
+    #     COND_UNSEL_VERTEX = 1,
+    #     COND_UNSEL_EDGE = 2,
+    #     COND_SEL_VERTEX = 3,
+    #     COND_SEL_EDGE = 4,
+    # };
+
+    # class HKHandler {
+    # private:
+    #     gfn::Preferences* prefs;
+
+    #     std::vector<std::vector<bool>> _hotKeyPress;   // hot key keeps getting presses depite cond not matching anymore
+    #     std::vector<std::vector<bool>> _hotKeyDown;    // hot key stays down despite cond not matching anymore
+    #     std::vector<std::vector<bool>> _hotKeyRelease; // release raw is not a thing
+    #     std::vector<std::vector<bool>> _hotKeyDoubleClick;
+    #     std::vector<std::vector<float>> _hotKeyVelocity;
+    #     std::vector<std::vector<gfn::TimePoint>> _pressTp;
+    #     std::vector<std::vector<gfn::TimePoint>> _releaseTp;
+    #     std::vector<std::vector<int>> _repeatCnt;
+
+    # public:
+    #     explicit HKHandler(gfn::Preferences* prefs);
+
+    #     int doubleClickThresholdMs = 200;
+
+    #     void updateHotKeyState();
+
+    #     bool press(int actionId, int condition = -1);
+
+    #     bool down(int actionId, int condition = -1);
+
+    #     bool release(int actionId, int condition = -1);
+
+    #     bool doubleClick(int actionId, int condition = -1);
+
+    #     bool hasVelocity(int actionId, int condition);
+
+    #     float velocity(int actionId, int condition);
+
+    #     unsigned long long timeSincePressMs(int actionId, int condition);
+
+    #     unsigned long long timeSinceReleaseMs(int actionId, int condition);
+    # };
+        
+
+            # New Implementaion: Scan through self.graph
+            # If in self.node_dict
+                # update its attr and mark as updated
+            # Else
+                # Add the node into self.node_dict
+            # Then loop through self.node_dict
+                # If it is not marked as updated
+                    # Then we remove the node (from window)
+                # If it is marked as updated
+                    # Reset updated to False and draw it on the screen     

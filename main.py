@@ -1,30 +1,24 @@
 import dearpygui.dearpygui as dpg
-import networkx as nx
-import Editor.Editor as Editor
+from Editor.HKHandler import HKHandler
+from Editor.Hotkey import Hotkey
+from Editor.EditorRegister import EditorRegister
+import Core.algorithms as alg
+
 dpg.create_context()
 dpg.create_viewport()
 dpg.setup_dearpygui()
 
+################# Hotkeys and Mouse #################
+
+
+
 ################# GUI #################
-
-# def change_text(sender, app_data):
-#     print("sender", sender)
-#     print("app_data", app_data)
-#     # if not panning_mode:
-#         # dpg.set_value("text_item", f"Mouse Button: {app_data[0]}, Down Time: {app_data[1]} seconds")
-
-# with dpg.handler_registry():
-#     dpg.add_mouse_drag_handler(callback=change_text)
-
-# with dpg.window(width=500, height=300):
-#     dpg.add_text("Press any mouse button", tag="text_item")
-
 ## GUI::Main ##
 with dpg.window(label="Primary", tag="primary", width = 1000, height=600):
     with dpg.group(horizontal=True, width=dpg.get_item_width("primary")/4*3):
         with dpg.tab_bar(label = "Graph View Bar", tag = "view_bar"):
             with dpg.tab(label = "Main View", tag = "main_view"):
-                    with dpg.drawlist(label = "Main", tag = "main", width = 800, height = 800):
+                    with dpg.drawlist(label = "Main", tag = "main", width = 600, height = 600, pos = [0, 0]):
                         pass
         with dpg.group(horizontal=False):
             ## GUI::Info ##
@@ -46,42 +40,73 @@ with dpg.window(label="Primary", tag="primary", width = 1000, height=600):
                         pass
 
 ################# Editor Register #################
-# RenderGraph.init_render_graph(G)
-editor_registor = []
+ed_reg = EditorRegister()
+main_ed = ed_reg.add_editor(window="main")
 
-# main_ed = Editor.Editor(window = "main", graph = G)
-# G = nx.Graph()
-# G.add_edge(1, 2) # default edge data=1
-# G.add_edge(2, 3, weight=0.9) # specify edge data
+main_ed.add_node(1, pos=[0, 0], color = (0, 0, 255))
+main_ed.add_node(2, pos=[700, 400], color = (0, 255, 255))
+main_ed.add_node(3, pos=[300, 500], color = (0, 255, 0))
+main_ed.add_node(4, pos=[30, 500], color = (255, 255, 0))
+main_ed.add_node(5, pos=[300, 50], color = (255, 0, 0))
 
-main_ed = Editor.Editor(window = "main")
-# main_ed.graph.add_node(1)
-# main_ed.graph.add_node(2)
-# main_ed.graph.add_node(3)
-main_ed.add_node(1, pos=[0, 0])
-main_ed.add_node(2, pos=[700, 400])
-main_ed.add_node(3, pos=[300, 500])
-main_ed.add_node(4, pos=[30, 500])
-main_ed.add_node(5, pos=[300, 50])
+main_ed.add_edge(3,5)
+main_ed.add_edge(2,5)
+main_ed.add_edge(4,5)
+main_ed.add_edge(3,2)
+main_ed.add_edge(1,4)
 
-main_ed.set_camera(0.5, [-100, -100])
+# write a piece of code that generates colors?
+
+### test algoritms ###
+
+tested = False
+def test_alg():
+    alg.hl_shortest_path(main_ed,3,4)
+    # print(alg.eccentricity(main_ed, 2))
+    alg.hl_eccentricity(main_ed, 2)
+    alg.hl_periphery(main_ed)
 
 
-editor_registor.append(main_ed)
+#### Actions and HotKeys
+
+# {"zoom": [hk1, hk2]}
+# hk1 = Hotkey.Hotkey(mouse = {0}, kbd = {17})
+hk2 = Hotkey(mouse = {0}, kbd = set())
+
+# action_dict = {"add node": [hk1], "pan": [hk2]}
+action_dict = {"pan": [hk2]}
+
+c = 100
+def add_node_handler(hkhandler):
+    global c
+    main_ed.add_node(c, pos = hkhandler.pos)
+    c += 1
+    # print(c)
+
+# def pan_handler(hkhandler):
+    # print("delta", hkhandler.delta)
+
+# action_func_dict = {"add node": add_node_handler, "pan": pan_handler}
+action_func_dict = {"pan": lambda x: print("pan action activated")}
+
+hkhandler = HKHandler()
 
 
 ################# Main Loop #################
-
 dpg.show_viewport()
 dpg.set_primary_window("primary", True)
-mode = None
 while dpg.is_dearpygui_running():
-    for ed in editor_registor:
+    hkhandler.update()
+    for action in action_dict:
+        for hk in action_dict[action]:
+            if hkhandler.is_hk_active(hk):
+                action_func_dict[action](hkhandler)
+    
+    for ed in ed_reg.editors:
         ed.update_window()
-    
-    if mode == "pan":
-        pass 
-    
+    if not tested:
+        tested = True
+        test_alg()
     dpg.render_dearpygui_frame()
 
 dpg.destroy_context()
