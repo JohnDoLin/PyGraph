@@ -3,6 +3,9 @@ from Editor.HKHandler import HKHandler
 from Editor.Hotkey import Hotkey
 from Editor.EditorRegister import EditorRegister
 import Core.algorithms as alg
+from Editor.Actions import action_func_dict
+from Editor.Keybinds import action_dict
+
 
 dpg.create_context()
 dpg.create_viewport()
@@ -68,27 +71,6 @@ def test_alg():
 
 
 #### Actions and HotKeys
-
-# {"zoom": [hk1, hk2]}
-# hk1 = Hotkey.Hotkey(mouse = {0}, kbd = {17})
-hk2 = Hotkey(mouse = {0}, kbd = set())
-
-# action_dict = {"add node": [hk1], "pan": [hk2]}
-action_dict = {"pan": [hk2]}
-
-c = 100
-def add_node_handler(hkhandler):
-    global c
-    main_ed.add_node(c, pos = hkhandler.pos)
-    c += 1
-    # print(c)
-
-# def pan_handler(hkhandler):
-    # print("delta", hkhandler.delta)
-
-# action_func_dict = {"add node": add_node_handler, "pan": pan_handler}
-action_func_dict = {"pan": lambda x: print("pan action activated")}
-
 hkhandler = HKHandler()
 
 

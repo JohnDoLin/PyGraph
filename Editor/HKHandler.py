@@ -6,7 +6,6 @@ import time
 class HKHandler:
     dragging_threashold = 0.1
     dragging_mouse_btn = dpg.mvMouseButton_Left
-    # hover_check_list = {"window": ["main"], "drawing": []}
     # check EditorRegister.editors
 
     mouse_calibration = [8, 12]
@@ -40,7 +39,7 @@ class HKHandler:
         self.pos = [self.pos[0] - HKHandler.mouse_calibration[0], self.pos[1] - HKHandler.mouse_calibration[1]]
 
         # Global -- mouse keys and press / release
-        # self.mouse = set()
+        self.mouse = set()
         self.press = False
         self.release = False
         for btn in range(0, 10):
@@ -67,6 +66,8 @@ class HKHandler:
         self.is_dragging = False
         if dpg.is_mouse_button_dragging(HKHandler.dragging_mouse_btn, HKHandler.dragging_threashold):
             self.is_dragging = True
+            self.delta = [self.pos[0] - self.press_pos[0], self.pos[1] - self.press_pos[1]]
+
 
         # Global -- mouse hovering
         self.hover_list = dict()
@@ -85,7 +86,7 @@ class HKHandler:
                 for node_pair, edge in ed.edge_dict.items():
                     if edge.is_hovered(self):
                         self.hover_list[window]["edge"].append(node_pair)
-        print('self.hover_list', self.hover_list)
+        # print('self.hover_list', self.hover_list)
 
 
         # print("dpg.get_item_rect_size(window)", dpg.get_item_rect_size(window))
