@@ -9,6 +9,17 @@ import Core.algorithms as alg
 dpg.create_context()
 dpg.create_viewport()
 dpg.setup_dearpygui()
+# print("version: ",dpg.get_major_version(), dpg.get_minor_version())
+################# Treminal Function #################
+# with dpg.value_registry():
+    # dpg.add_string_value(tag="terminal_input")
+
+def terminal_callback(sender, data):
+    # print(dpg.get_value("terminal"))
+    dpg.set_value('terminal', '')
+    # print(dpg.get_value("terminal"))
+    # dpg.set_value('terminal', 'xxxx')
+    # print(dpg.get_value("terminal"))
 
 ################# GUI #################
 ## GUI::Main ##
@@ -33,15 +44,18 @@ with dpg.window(label="Primary", tag="primary", width = 1000, height=600):
             ## GUI::Terminal ##
             with dpg.group():
                 with dpg.tab_bar(label = "Terminal Tab Bar", tag = "terminal_bar"):
-                    with dpg.tab(label = "Terminal", tag = "terminal"):
+                    with dpg.tab(label = "Terminal", tag = "terminal_tab"):
+                        dpg.add_input_text(tag='terminal', multiline=True, default_value="")
+                        # dpg.add_input_text(label="terminal", tag = "terminal", multiline=True, no_spaces=True, callback=terminal_callback)
                         # dpg.add_text(default_value="This is info text.")
                         pass
+# dpg.toggle_viewport_fullscreen()
 
 ################# Editor Register #################
 ed_reg = EditorRegister()
 g = nx.star_graph(5)
 main_ed = ed_reg.add_editor(window="main", graph = g)
-main_ed.set_camera(0.1, [0, 0])
+# main_ed.set_camera(0.1, [0, 0])
 # main_ed.add_node(1, pos=[0, 0], color = (0, 0, 255))
 # main_ed.add_node(2, pos=[700, 400], color = (0, 255, 255))
 # main_ed.add_node(3, pos=[300, 500], color = (0, 255, 0))
@@ -83,7 +97,6 @@ while dpg.is_dearpygui_running():
     
     for ed in ed_reg.editors.values():
         ed.update_window()
-        # print("out offset", main_ed.offset)
     # if not tested:
     #     tested = True
     #     test_alg()

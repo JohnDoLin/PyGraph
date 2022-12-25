@@ -32,6 +32,9 @@ class HKHandler:
         self.wheel_speed = 0
         self.is_wheel_updated = False
 
+        self.mouse_down_mode = None
+        self.mouse_down_data = None
+
     def update_wheel(self, sender, data):
         # print("data", data)
         # self.is_wheel_updated = True
@@ -69,6 +72,8 @@ class HKHandler:
             self.press_pos = self.pos
             self.release_tp = time.monotonic_ns()
             self.release = True
+            self.mouse_down_mode = None
+            self.mouse_down_data = None
 
         # Global -- mouse wheel
         self.is_wheel_updated = False
@@ -86,7 +91,7 @@ class HKHandler:
             self.is_dragging = True
             self.deltadelta = [self.pos[0] - self.press_pos[0] - self.delta[0], self.pos[1] - self.press_pos[1] - self.delta[1]]
             self.delta = [self.pos[0] - self.press_pos[0], self.pos[1] - self.press_pos[1]]
-
+            # print("self.mous_down_mode", self.mouse_down_mode)
 
         # Global -- mouse hovering
         self.hover_list = dict()
@@ -100,10 +105,10 @@ class HKHandler:
                 self.hover_list[window] = {"node": [], "edge": []}
                 # Drawing
                 for node_name, node in ed.node_dict.items():
-                    if node.is_hovered(self):
+                    if node.is_hovered(self, offset = ed.offset, scale = ed.scale):
                         self.hover_list[window]["node"].append(node_name)
                 for node_pair, edge in ed.edge_dict.items():
-                    if edge.is_hovered(self):
+                    if edge.is_hovered(self, offset = ed.offset, scale = ed.scale):
                         self.hover_list[window]["edge"].append(node_pair)
         # print('self.hover_list', self.hover_list)
 

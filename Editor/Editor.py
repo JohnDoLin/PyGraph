@@ -19,6 +19,7 @@ class Editor:
         self.edge_dict = dict()
         self.scale = 1
         self.offset = Vec2(0, 0)
+        self.prev_offset = Vec2(0, 0)
 
     def graph_to_view_coords(self, pos):
         return (pos - self.offset) * self.scale
@@ -79,9 +80,6 @@ class Editor:
         if node not in self.node_dict:
             self.graph.add_node(node)
             self.node_dict[node] = Node(pos = Vec2(pos), **kargs)
-
-## Here, parameters node1, node2 of add_edge will take their names instead of the Node object, just like in add_node  
-## Um Ofc
 
     def add_edge(self, node1, node2, **kargs):
         node_pair = frozenset({node1, node2})

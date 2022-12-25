@@ -19,16 +19,16 @@ class Edge:
         self.style = {"color": color, "thickness": thickness}
 
     def draw_edge(self, window: str, scale: float = 1, offset: Vec2 = Vec2(0, 0)):
-        pos1_array = (self.start.pos + offset).to_precision_array(8)
-        pos2_array = (self.end.pos + offset).to_precision_array(8)
+        pos1_array = ((self.start.pos - offset) * scale).to_precision_array(8)
+        pos2_array = ((self.end.pos - offset)  * scale).to_precision_array(8)
         if self.created:
             dpg.configure_item(self.uuid, p1 = pos1_array, p2 = pos2_array, color = self.style["color"], thickness= self.style["thickness"] * scale)
         else:
             dpg.draw_line(pos1_array, pos2_array, tag=self.uuid, parent= window, color= self.style["color"], thickness= self.style["thickness"] * scale)
             self.created = True
 
-    def is_hovered(self, hkhandler):
-        if Vec2(hkhandler.pos).dist_to_two_dots(self.start.pos, self.end.pos) <= self.style["thickness"] /2:
+    def is_hovered(self, hkhandler, offset, scale):
+        if (Vec2(hkhandler.pos)/ scale + offset).dist_to_two_dots(self.start.pos, self.end.pos) <= self.style["thickness"] /2:
             ## Should be * scale
             return True
         return False

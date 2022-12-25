@@ -20,15 +20,15 @@ class Node:
         self.style = {"color": color, "radius": radius}
 
     def draw_node(self, window: str, scale: float = 1, offset: Vec2 = Vec2([0, 0])):
-        pos_array = (self.pos + offset).to_precision_array(8)
+        pos_array = ((self.pos - offset) * scale).to_precision_array(8)
         if self.created:
             dpg.configure_item(self.uuid, center=pos_array, radius=self.style["radius"] * scale, fill = self.style["color"])
         else:
             dpg.draw_circle(pos_array, self.style["radius"] * scale, tag=self.uuid, parent= window, fill=self.style["color"])
             self.created = True
 
-    def is_hovered(self, hkhandler):
-        if Vec2.dist(Vec2(hkhandler.pos), self.pos) <= self.style["radius"]:
+    def is_hovered(self, hkhandler, offset, scale):
+        if Vec2.dist(Vec2(hkhandler.pos) / scale + offset, self.pos) <= self.style["radius"]:
             return True
         return False
 
