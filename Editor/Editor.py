@@ -32,6 +32,8 @@ class Editor:
                     if node != n2: # Not needed?
                         new_vel += (self.node_dict[n2].pos-self.node_dict[node].pos).normalized() * fs.attraction(self.node_dict[node].pos, self.node_dict[n2].pos)
                         new_vel += (self.node_dict[node].pos-self.node_dict[n2].pos).normalized() * fs.repulsion(self.node_dict[node].pos, self.node_dict[n2].pos)
+                    if n2 in self.graph[node] and n2 != node:
+                        new_vel += (self.node_dict[n2].pos-self.node_dict[node].pos).normalized() * fs.edge_attraction(self.node_dict[node].pos, self.node_dict[n2].pos)
                 # new_vel *= 0.5
                 self.node_dict[node].vel = new_vel
                 self.node_dict[node].pos += new_vel*dt
@@ -55,6 +57,10 @@ class Editor:
                 self.add_edge(node_pair[0], node_pair[1])
             else:
                 self.edge_dict[node_fs].updated = True
+        # Computing edge attraction force 
+        # for node in self.graph:
+            # for n2 in self.graph.neighbors(node):
+                
 
         # Draw the edge first so it would be on the back 
         pop_list = []
@@ -66,12 +72,14 @@ class Editor:
                 edge.draw_edge(window = self.window, scale = self.scale, offset = self.offset)
             edge.updated = False
         for np in pop_list:
-            self.edge_dict.pop(np)
-        
+            # self.edge_dict.pop(np)
+            self.delete_edge(np)
+
         for node in self.node_dict:
             nd = self.node_dict[node]
             if not nd.updated:
-                self.node_dict.pop(nd)
+                # self.node_dict.pop(nd)
+                self.delete_node(nd)
             else:
                 nd.draw_node(window = self.window, scale = self.scale, offset = self.offset)
             nd.updated = False
@@ -90,9 +98,16 @@ class Editor:
         self.edge_dict[node_pair] = Edge(start = self.node_dict[node1], end = self.node_dict[node2], **kargs)
 
 
-    # def delete_node(self, node):
-    #     self.graph.remove_nodes_from([node])  
-    #     self.node_dict.remove(self.graph.nodes[node])
+    def delete_node(self, node):
+        self.graph.remove_nodes_from([node])
+        dpg.delete_item(self.node_dict[node].uuid)
+        del self.node_dict[node]
+
+    def delete_edge(self, np):
+        np_tuple = tuple(np)
+        self.graph.remove_nodes_from([np_tuple])
+        dpg.delete_item(self.edge_dict[np].uuid)
+        del self.edge_dict[np]
 
     # def set_node(self, node, data):
     #     pass

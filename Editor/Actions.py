@@ -27,7 +27,9 @@ def drag_node(hkhandler):
         for ed in EdReg.editors.values():
             if ed.window == hkhandler.mouse_down_data["window"]:
                 ed.node_dict[hkhandler.mouse_down_data["node"]].pos = (Vec2(hkhandler.pos))/ed.scale + ed.offset
+                ed.node_dict[hkhandler.mouse_down_data["node"]].vel = Vec2(0, 0) 
                 # print("dragging node")
+
 
 def zoom(hkhandler):
     for window in hkhandler.hover_list:
@@ -35,15 +37,17 @@ def zoom(hkhandler):
             for ed in EdReg.editors.values():
                 if ed.window == window:
                     ed.set_camera(ed.scale * 2**(hkhandler.wheel_speed), ed.offset + Vec2(hkhandler.pos)/ed.scale*(1-1/(2**(hkhandler.wheel_speed))))
-                    # Cursor should be the center
     # print("zooming")
 
 def eval_terminal(hkhandler):
-    print('eval_terminal activated')
-    print(dpg.get_value("terminal"))
-    dpg.configure_item("terminal", enabled=False)
-    dpg.set_value("terminal", "")
-    dpg.configure_item("terminal", enabled=True)
+    # print('eval_terminal activated')
+    # print(dpg.get_value("terminal"))
+    # dpg.configure_item("terminal", enabled=False)
+    # dpg.set_value("terminal", "")
+    # dpg.configure_item("terminal", enabled=True)
+    # print("terminal activated")
+    # print("changing graph")
+    # EdReg.editors["main"].graph = nx.star_graph(5)
     # if dpg.get_item_state("terminal")["focused"]:
         # dpg.set_value("terminal", "")
     pass

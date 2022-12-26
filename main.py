@@ -53,20 +53,21 @@ with dpg.window(label="Primary", tag="primary", width = 1000, height=600):
 
 ################# Editor Register #################
 ed_reg = EditorRegister()
-g = nx.star_graph(5)
-main_ed = ed_reg.add_editor(window="main", graph = g)
+# g = nx.star_graph(5)
+main_ed = ed_reg.add_editor(window="main")
 # main_ed.set_camera(0.1, [0, 0])
-# main_ed.add_node(1, pos=[0, 0], color = (0, 0, 255))
-# main_ed.add_node(2, pos=[700, 400], color = (0, 255, 255))
-# main_ed.add_node(3, pos=[300, 500], color = (0, 255, 0))
-# main_ed.add_node(4, pos=[30, 500], color = (255, 255, 0))
-# main_ed.add_node(5, pos=[300, 50], color = (255, 0, 0))
 
-# main_ed.add_edge(3,5)
-# main_ed.add_edge(2,5)
-# main_ed.add_edge(4,5)
-# main_ed.add_edge(3,2)
-# main_ed.add_edge(1,4)
+main_ed.add_node(1, pos=[0, 0], color = (0, 0, 255))
+main_ed.add_node(2, pos=[700, 400], color = (0, 255, 255))
+main_ed.add_node(3, pos=[300, 500], color = (0, 255, 0))
+main_ed.add_node(4, pos=[30, 500], color = (255, 255, 0))
+main_ed.add_node(5, pos=[300, 50], color = (255, 0, 0))
+
+main_ed.add_edge(3,5)
+main_ed.add_edge(2,5)
+main_ed.add_edge(4,5)
+main_ed.add_edge(3,2)
+main_ed.add_edge(1,4)
 
 # write a piece of code that generates colors?
 
