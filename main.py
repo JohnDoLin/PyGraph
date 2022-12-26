@@ -6,9 +6,16 @@ from Editor.Actions import action_func_dict
 from Editor.Keybinds import action_dict
 import networkx as nx 
 import Core.algorithms as alg
+import time
 dpg.create_context()
 dpg.create_viewport()
 dpg.setup_dearpygui()
+
+# dpg.show_style_editor()
+# dpg.show_item_registry()
+dpg.show_debug()
+dpg.show_metrics()
+
 # print("version: ",dpg.get_major_version(), dpg.get_minor_version())
 ################# Treminal Function #################
 # with dpg.value_registry():
@@ -16,7 +23,9 @@ dpg.setup_dearpygui()
 
 def terminal_callback(sender, data):
     # print(dpg.get_value("terminal"))
+    exec(dpg.get_value("terminal"))
     dpg.set_value('terminal', '')
+
     # print(dpg.get_value("terminal"))
     # dpg.set_value('terminal', 'xxxx')
     # print(dpg.get_value("terminal"))
@@ -46,6 +55,7 @@ with dpg.window(label="Primary", tag="primary", width = 1000, height=600):
                 with dpg.tab_bar(label = "Terminal Tab Bar", tag = "terminal_bar"):
                     with dpg.tab(label = "Terminal", tag = "terminal_tab"):
                         dpg.add_input_text(tag='terminal', multiline=True, default_value="")
+                        dpg.add_button(tag="terminal_run", label="Run", callback=terminal_callback)
                         # dpg.add_input_text(label="terminal", tag = "terminal", multiline=True, no_spaces=True, callback=terminal_callback)
                         # dpg.add_text(default_value="This is info text.")
                         pass
@@ -57,17 +67,17 @@ ed_reg = EditorRegister()
 main_ed = ed_reg.add_editor(window="main")
 # main_ed.set_camera(0.1, [0, 0])
 
-main_ed.add_node(1, pos=[0, 0], color = (0, 0, 255))
-main_ed.add_node(2, pos=[700, 400], color = (0, 255, 255))
-main_ed.add_node(3, pos=[300, 500], color = (0, 255, 0))
-main_ed.add_node(4, pos=[30, 500], color = (255, 255, 0))
-main_ed.add_node(5, pos=[300, 50], color = (255, 0, 0))
+# main_ed.add_node(1, pos=[0, 0], color = (0, 0, 255))
+# main_ed.add_node(2, pos=[700, 400], color = (0, 255, 255))
+# main_ed.add_node(3, pos=[300, 500], color = (0, 255, 0))
+# main_ed.add_node(4, pos=[30, 500], color = (255, 255, 0))
+# main_ed.add_node(5, pos=[300, 50], color = (255, 0, 0))
 
-main_ed.add_edge(3,5)
-main_ed.add_edge(2,5)
-main_ed.add_edge(4,5)
-main_ed.add_edge(3,2)
-main_ed.add_edge(1,4)
+# main_ed.add_edge(3,5)
+# main_ed.add_edge(2,5)
+# main_ed.add_edge(4,5)
+# main_ed.add_edge(3,2)
+# main_ed.add_edge(1,4)
 
 # write a piece of code that generates colors?
 
@@ -90,14 +100,19 @@ with dpg.handler_registry():
 dpg.show_viewport()
 dpg.set_primary_window("primary", True)
 while dpg.is_dearpygui_running():
+    # t0 = time.time()
     hkhandler.update()
     for action in action_dict:
         for hk in action_dict[action]:
             if hkhandler.is_hk_active(hk):
                 action_func_dict[action](hkhandler)
-    
+    # t1 = time.time()
+
     for ed in ed_reg.editors.values():
         ed.update_window()
+    # t2 = time.time()
+    # print("hotkey == t1 - t0 = ", t1 - t0)
+    # print("TOTAL UPD == t2 - t1 = ", t2 - t1)
     # if not tested:
     #     tested = True
     #     test_alg()

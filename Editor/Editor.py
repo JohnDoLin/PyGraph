@@ -4,6 +4,8 @@ import Core.Force as fs
 from Core.Node import Node as Node
 from Core.Edge import Edge as Edge 
 from Structure.Vec2 import Vec2 
+import uuid as UUID
+import time
 dt = 1
 
 class Editor:
@@ -24,22 +26,32 @@ class Editor:
     def graph_to_view_coords(self, pos):
         return (pos - self.offset) * self.scale
     
-    def update_window(self):             
+    def update_window(self):
+        t0 = time.time()
+
         for node in self.graph:
+            t1 = time.time()
             if node in self.node_dict:
                 new_vel = Vec2(0, 0)
                 for n2 in self.graph.nodes:
+                    if n2 not in self.node_dict:
+                        continue
+                        # self.add_node(n2)
                     if node != n2: # Not needed?
                         new_vel += (self.node_dict[n2].pos-self.node_dict[node].pos).normalized() * fs.attraction(self.node_dict[node].pos, self.node_dict[n2].pos)
                         new_vel += (self.node_dict[node].pos-self.node_dict[n2].pos).normalized() * fs.repulsion(self.node_dict[node].pos, self.node_dict[n2].pos)
                     if n2 in self.graph[node] and n2 != node:
                         new_vel += (self.node_dict[n2].pos-self.node_dict[node].pos).normalized() * fs.edge_attraction(self.node_dict[node].pos, self.node_dict[n2].pos)
                 # new_vel *= 0.5
-                self.node_dict[node].vel = new_vel
+                self.node_dict[node].vel += new_vel
                 self.node_dict[node].pos += new_vel*dt
                 self.node_dict[node].updated = True
             else:
                 self.node_dict[node] = Node()
+            t2 = time.time()
+            print("t2 - t1", t2 - t1)
+        t3 = time.time()
+        print('update node pos and vel and mark updated = t3 - t0 =', t3 - t0)
 
         for node_pair in list(self.graph.edges):
             # For now I ignore parallel edges (i.e. multiedges) bc I literally don't care about them
@@ -60,7 +72,6 @@ class Editor:
         # Computing edge attraction force 
         # for node in self.graph:
             # for n2 in self.graph.neighbors(node):
-                
 
         # Draw the edge first so it would be on the back 
         pop_list = []
@@ -75,19 +86,24 @@ class Editor:
             # self.edge_dict.pop(np)
             self.delete_edge(np)
 
+        pop_list = []
         for node in self.node_dict:
             nd = self.node_dict[node]
             if not nd.updated:
-                # self.node_dict.pop(nd)
-                self.delete_node(nd)
+                pop_list.append(node)                
             else:
                 nd.draw_node(window = self.window, scale = self.scale, offset = self.offset)
             nd.updated = False
+        for nd in pop_list:
+            self.delete_node(nd)
+        # print()
 
-    def add_node(self, node, pos = [0,0], **kargs):
+    def add_node(self, node = None, pos = [0,0], **kargs):
         if node not in self.node_dict:
-            self.graph.add_node(node)
-            self.node_dict[node] = Node(pos = Vec2(pos), **kargs)
+            if node == None:
+                node = str((UUID.uuid4()).int)[:8]
+            self.node_dict[node] = Node(uuid = node, pos = Vec2(pos), **kargs)
+            self.graph.add_node(self.node_dict[node].uuid)
 
     def add_edge(self, node1, node2, **kargs):
         node_pair = frozenset({node1, node2})
