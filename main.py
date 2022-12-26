@@ -7,28 +7,27 @@ from Editor.Keybinds import action_dict
 import networkx as nx 
 import Core.algorithms as alg
 import time
+from Core.Force import Force
 dpg.create_context()
 dpg.create_viewport()
 dpg.setup_dearpygui()
 
 # dpg.show_style_editor()
 # dpg.show_item_registry()
-dpg.show_debug()
-dpg.show_metrics()
 
-# print("version: ",dpg.get_major_version(), dpg.get_minor_version())
+# dpg.show_debug()
+# dpg.show_metrics()
+
 ################# Treminal Function #################
-# with dpg.value_registry():
-    # dpg.add_string_value(tag="terminal_input")
-
 def terminal_callback(sender, data):
     # print(dpg.get_value("terminal"))
     exec(dpg.get_value("terminal"))
     dpg.set_value('terminal', '')
 
-    # print(dpg.get_value("terminal"))
-    # dpg.set_value('terminal', 'xxxx')
-    # print(dpg.get_value("terminal"))
+def constant_cb(sender, data):
+    Force.constants[int(sender[1:])] = data
+    print("sender", sender)
+    print("data", data)
 
 ################# GUI #################
 ## GUI::Main ##
@@ -48,23 +47,28 @@ with dpg.window(label="Primary", tag="primary", width = 1000, height=600):
             with dpg.group():
                 with dpg.tab_bar(label = "Control Tab Bar", tag = "control_bar"):
                     with dpg.tab(label = "Control", tag = "control"):
+                        dpg.add_slider_double(label="c1", tag="c1", callback=constant_cb, default_value=Force.constants[1], min_value=0.001, max_value=10)
+                        dpg.add_slider_double(label="c2", tag="c2", callback=constant_cb, default_value=Force.constants[2], min_value=1, max_value=1000)
+                        dpg.add_slider_double(label="c3", tag="c3", callback=constant_cb, default_value=Force.constants[3], min_value=1, max_value=10000000)
+                        dpg.add_slider_double(label="c4", tag="c4", callback=constant_cb, default_value=Force.constants[4], min_value=0, max_value=100)
+                        # dpg.add_slider_double(label="c1", tag="c1", callback=constant_cb)
                         # dpg.add_text(default_value="This is info text.")
-                        pass
             ## GUI::Terminal ##
             with dpg.group():
                 with dpg.tab_bar(label = "Terminal Tab Bar", tag = "terminal_bar"):
                     with dpg.tab(label = "Terminal", tag = "terminal_tab"):
                         dpg.add_input_text(tag='terminal', multiline=True, default_value="")
                         dpg.add_button(tag="terminal_run", label="Run", callback=terminal_callback)
-                        # dpg.add_input_text(label="terminal", tag = "terminal", multiline=True, no_spaces=True, callback=terminal_callback)
-                        # dpg.add_text(default_value="This is info text.")
-                        pass
+
 # dpg.toggle_viewport_fullscreen()
 
 ################# Editor Register #################
 ed_reg = EditorRegister()
-# g = nx.star_graph(5)
-main_ed = ed_reg.add_editor(window="main")
+g = nx.grid_2d_graph(m = 5, n = 5)
+main_ed = ed_reg.add_editor(window="main", graph = g)
+
+
+# main_ed = ed_reg.add_editor(window="main")
 # main_ed.set_camera(0.1, [0, 0])
 
 # main_ed.add_node(1, pos=[0, 0], color = (0, 0, 255))
@@ -89,8 +93,7 @@ def test_alg():
     alg.hl_eccentricity(main_ed, 2)
     alg.hl_periphery(main_ed)
 
-
-#### Actions and HotKeys
+#### Actions and HotKeys ###
 hkhandler = HKHandler()
 with dpg.handler_registry():
     dpg.add_mouse_wheel_handler(callback=hkhandler.update_wheel)
@@ -113,6 +116,7 @@ while dpg.is_dearpygui_running():
     # t2 = time.time()
     # print("hotkey == t1 - t0 = ", t1 - t0)
     # print("TOTAL UPD == t2 - t1 = ", t2 - t1)
+
     # if not tested:
     #     tested = True
     #     test_alg()

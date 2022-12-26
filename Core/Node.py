@@ -9,7 +9,7 @@ class Node:
     default_color = (255, 255, 255)
     default_highlighted_color = (255,0,255)
     
-    def __init__(self, pos = None, vel = [0, 0], uuid = None, updated = True, created = False, color = default_color, radius = default_radius):
+    def __init__(self, pos = None, vel = Vec2(0, 0), uuid = None, updated = True, created = False, color = default_color, radius = default_radius):
         if pos == None: self.pos = Vec2(random.random()*100, random.random()*100) 
         else: self.pos = Vec2(pos)
         self.vel = vel

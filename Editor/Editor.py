@@ -1,6 +1,6 @@
 import dearpygui.dearpygui as dpg
 import networkx as nx
-import Core.Force as fs
+from Core.Force import Force as fs
 from Core.Node import Node as Node
 from Core.Edge import Edge as Edge 
 from Structure.Vec2 import Vec2 
@@ -12,6 +12,10 @@ class Editor:
     '''
     Editor will only show things in edge_dict and node_dict.
     '''
+
+
+    max_update_non_adjacent_node = 1
+    max_update_adjacent_node = 1
 
     def __init__(self, window = None, graph: nx.Graph = None):
         self.window = window
@@ -27,31 +31,51 @@ class Editor:
         return (pos - self.offset) * self.scale
     
     def update_window(self):
-        t0 = time.time()
+        # t0 = time.time()
 
         for node in self.graph:
-            t1 = time.time()
+            non_adjacent_node_count = 0
+            adjacent_node_count = 0
+            # t1 = time.time()
             if node in self.node_dict:
                 new_vel = Vec2(0, 0)
+                if non_adjacent_node_count >= Editor.max_update_non_adjacent_node:
+                    break
+                if adjacent_node_count >= Editor.max_update_adjacent_node:
+                    break
                 for n2 in self.graph.nodes:
                     if n2 not in self.node_dict:
                         continue
-                        # self.add_node(n2)
+                    if n2 not in self.graph[node]:
+                        non_adjacent_node_count += 1
+                        # print("non")
                     if node != n2: # Not needed?
+                        adjacent_node_count += 1
+                        # print("adj")
                         new_vel += (self.node_dict[n2].pos-self.node_dict[node].pos).normalized() * fs.attraction(self.node_dict[node].pos, self.node_dict[n2].pos)
                         new_vel += (self.node_dict[node].pos-self.node_dict[n2].pos).normalized() * fs.repulsion(self.node_dict[node].pos, self.node_dict[n2].pos)
-                    if n2 in self.graph[node] and n2 != node:
                         new_vel += (self.node_dict[n2].pos-self.node_dict[node].pos).normalized() * fs.edge_attraction(self.node_dict[node].pos, self.node_dict[n2].pos)
+
+                # for n2 in self.graph.nodes:
+                #     if n2 not in self.node_dict:
+                #         continue
+                #         # self.add_node(n2)
+                #     if node != n2: # Not needed?
+                #         new_vel += (self.node_dict[n2].pos-self.node_dict[node].pos).normalized() * fs.attraction(self.node_dict[node].pos, self.node_dict[n2].pos)
+                #         new_vel += (self.node_dict[node].pos-self.node_dict[n2].pos).normalized() * fs.repulsion(self.node_dict[node].pos, self.node_dict[n2].pos)
+                #     if n2 in self.graph[node] and n2 != node:
+                #         new_vel += (self.node_dict[n2].pos-self.node_dict[node].pos).normalized() * fs.edge_attraction(self.node_dict[node].pos, self.node_dict[n2].pos)
+                
                 # new_vel *= 0.5
-                self.node_dict[node].vel += new_vel
-                self.node_dict[node].pos += new_vel*dt
+                # self.node_dict[node].vel += new_vel * dt
+                self.node_dict[node].pos += new_vel * dt
                 self.node_dict[node].updated = True
             else:
                 self.node_dict[node] = Node()
-            t2 = time.time()
-            print("t2 - t1", t2 - t1)
-        t3 = time.time()
-        print('update node pos and vel and mark updated = t3 - t0 =', t3 - t0)
+            # t2 = time.time()
+            # print("t2 - t1", t2 - t1)
+        # t3 = time.time()
+        # print('update node pos and vel and mark updated = t3 - t0 =', t3 - t0)
 
         for node_pair in list(self.graph.edges):
             # For now I ignore parallel edges (i.e. multiedges) bc I literally don't care about them
