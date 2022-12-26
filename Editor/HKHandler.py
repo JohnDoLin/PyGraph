@@ -10,6 +10,7 @@ class HKHandler:
     # check EditorRegister.editors
 
     mouse_calibration = [8, 12]
+
     def __init__(self):
         self.mouse = set()
         self.kbd = set()
@@ -34,6 +35,29 @@ class HKHandler:
 
         self.mouse_down_mode = None
         self.mouse_down_data = None
+    
+    def __str__(self):
+        return f'''HKHandler(
+                            mouse = {self.mouse},
+                            kbd = {self.kbd},
+                            pos = {self.pos},
+                            is_dragging = {self.is_dragging},
+                            down = {self.down},
+                            press = {self.press},
+                            press_pos = {self.press_pos},
+                            press_tp = {self.press_tp},
+                            release = {self.release},
+                            release_pos = {self.release_pos},
+                            release_tp = {self.release_tp},
+                            delta = {self.delta},
+                            wheel_sum = {self.wheel_sum},
+                            wheel_speed = {self.wheel_speed},
+                            is_wheel_updated = {self.is_wheel_updated},
+                            mouse_down_mode = {self.mouse_down_mode},
+                            mouse_down_data = {self.mouse_down_data},
+                            )'''
+    def __repr__(self):
+        return self.__str__()
 
     def update_wheel(self, sender, data):
         # print("data", data)
@@ -54,9 +78,14 @@ class HKHandler:
         self.pos = [self.pos[0] - HKHandler.mouse_calibration[0], self.pos[1] - HKHandler.mouse_calibration[1]]
 
         # Global -- mouse keys and press / release
+        if self.release:
+            self.mouse_down_mode = None
+            self.mouse_down_data = None
+
         self.mouse = set()
         self.press = False
         self.release = False
+
         for btn in range(0, 10):
             if dpg.is_mouse_button_down(btn):
                 self.mouse.add(btn)
@@ -64,16 +93,14 @@ class HKHandler:
         if len(self.mouse) != 0 and self.down == False:
             self.down = True
             self.press_pos = self.pos
-            self.press_tp = time.monotonic_ns()
+            self.press_tp = time.time()
             self.press = True
 
         if len(self.mouse) == 0 and self.down == True:
             self.down = False
             self.press_pos = self.pos
-            self.release_tp = time.monotonic_ns()
+            self.release_tp = time.time()
             self.release = True
-            self.mouse_down_mode = None
-            self.mouse_down_data = None
 
         # Global -- mouse wheel
         self.is_wheel_updated = False
@@ -123,14 +150,22 @@ class HKHandler:
         #     print("kbd", self.kbd)
 
     def is_hk_active(self, hk: Hotkey):
-        if (
-            True # (len(self.mouse)!=0 or len(self.kbd)!=0)
-            and (self.mouse >= hk.mouse)
-            and (self.kbd >= hk.kbd)
-            # and hk.wheel
-            and (not hk.wheel or self.is_wheel_updated)
-            ):
-            return True
+        if hk.strict:
+            if (
+                (self.mouse == hk.mouse)
+                and (self.kbd == hk.kbd)
+                and (not hk.wheel or self.is_wheel_updated)
+                and (not hk.release or self.release)
+                ):
+                return True
+        else:
+            if (
+                (self.mouse >= hk.mouse)
+                and (self.kbd >= hk.kbd)
+                and (not hk.wheel or self.is_wheel_updated)
+                and (not hk.release or self.release)
+                ):
+                return True
         return False
 
 

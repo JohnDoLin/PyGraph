@@ -4,3 +4,12 @@ class Hotkey:
         self.mouse = args.get("mouse", set()) 
         self.kbd = args.get("kbd", set())
         self.wheel = args.get("wheel", False)
+        self.release = args.get("release", False)
+        self.strict = args.get("strict", True)
+        self.condition = args.get("condition", None)
+    
+    def __str__(self):
+        return f"Hotkey(mouse = {self.mouse}, kbd = {self.kbd}, wheel = {self.wheel}, release = {self.release})"
+
+    def __repr__(self) -> str:
+        return self.__str__()

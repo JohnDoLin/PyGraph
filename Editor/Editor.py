@@ -44,18 +44,18 @@ class Editor:
                 if adjacent_node_count >= Editor.max_update_adjacent_node:
                     break
                 for n2 in self.graph.nodes:
-                    if n2 not in self.node_dict:
-                        continue
+                    if n2 == node: continue
+                    if n2 not in self.node_dict: continue
+
+                    new_vel += (self.node_dict[n2].pos-self.node_dict[node].pos).normalized() * fs.attraction(self.node_dict[node].pos, self.node_dict[n2].pos)
+                    new_vel += (self.node_dict[node].pos-self.node_dict[n2].pos).normalized() * fs.repulsion(self.node_dict[node].pos, self.node_dict[n2].pos)
                     if n2 not in self.graph[node]:
                         non_adjacent_node_count += 1
-                        # print("non")
-                    if node != n2: # Not needed?
+                    else:
                         adjacent_node_count += 1
-                        # print("adj")
-                        new_vel += (self.node_dict[n2].pos-self.node_dict[node].pos).normalized() * fs.attraction(self.node_dict[node].pos, self.node_dict[n2].pos)
-                        new_vel += (self.node_dict[node].pos-self.node_dict[n2].pos).normalized() * fs.repulsion(self.node_dict[node].pos, self.node_dict[n2].pos)
                         new_vel += (self.node_dict[n2].pos-self.node_dict[node].pos).normalized() * fs.edge_attraction(self.node_dict[node].pos, self.node_dict[n2].pos)
-
+                        # if abs(new_vel.v[0]) >= abs(new_vel.v[1]): new_vel.v[1] *= -0.5
+                        # else: new_vel.v[0] *= -0.5
                 # for n2 in self.graph.nodes:
                 #     if n2 not in self.node_dict:
                 #         continue

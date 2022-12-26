@@ -8,6 +8,7 @@ import networkx as nx
 import Core.algorithms as alg
 import time
 from Core.Force import Force
+from threading import Thread
 dpg.create_context()
 dpg.create_viewport()
 dpg.setup_dearpygui()
@@ -21,13 +22,13 @@ dpg.setup_dearpygui()
 ################# Treminal Function #################
 def terminal_callback(sender, data):
     # print(dpg.get_value("terminal"))
-    exec(dpg.get_value("terminal"))
+    myThread = Thread(target=lambda: exec(dpg.get_value("terminal")))
+    myThread.start()
+    # exec(dpg.get_value("terminal"))
     dpg.set_value('terminal', '')
 
 def constant_cb(sender, data):
     Force.constants[int(sender[1:])] = data
-    print("sender", sender)
-    print("data", data)
 
 ################# GUI #################
 ## GUI::Main ##
@@ -51,8 +52,7 @@ with dpg.window(label="Primary", tag="primary", width = 1000, height=600):
                         dpg.add_slider_double(label="c2", tag="c2", callback=constant_cb, default_value=Force.constants[2], min_value=1, max_value=1000)
                         dpg.add_slider_double(label="c3", tag="c3", callback=constant_cb, default_value=Force.constants[3], min_value=1, max_value=10000000)
                         dpg.add_slider_double(label="c4", tag="c4", callback=constant_cb, default_value=Force.constants[4], min_value=0, max_value=100)
-                        # dpg.add_slider_double(label="c1", tag="c1", callback=constant_cb)
-                        # dpg.add_text(default_value="This is info text.")
+
             ## GUI::Terminal ##
             with dpg.group():
                 with dpg.tab_bar(label = "Terminal Tab Bar", tag = "terminal_bar"):
@@ -64,24 +64,24 @@ with dpg.window(label="Primary", tag="primary", width = 1000, height=600):
 
 ################# Editor Register #################
 ed_reg = EditorRegister()
-g = nx.grid_2d_graph(m = 5, n = 5)
-main_ed = ed_reg.add_editor(window="main", graph = g)
+# g = nx.grid_2d_graph(m = 7, n = 7)
+# main_ed = ed_reg.add_editor(window="main", graph = g)
 
 
-# main_ed = ed_reg.add_editor(window="main")
 # main_ed.set_camera(0.1, [0, 0])
+main_ed = ed_reg.add_editor(window="main")
 
-# main_ed.add_node(1, pos=[0, 0], color = (0, 0, 255))
-# main_ed.add_node(2, pos=[700, 400], color = (0, 255, 255))
-# main_ed.add_node(3, pos=[300, 500], color = (0, 255, 0))
-# main_ed.add_node(4, pos=[30, 500], color = (255, 255, 0))
-# main_ed.add_node(5, pos=[300, 50], color = (255, 0, 0))
+main_ed.add_node(1, pos=[0, 0], color = (0, 0, 255))
+main_ed.add_node(2, pos=[700, 400], color = (0, 255, 255))
+main_ed.add_node(3, pos=[300, 500], color = (0, 255, 0))
+main_ed.add_node(4, pos=[30, 500], color = (255, 255, 0))
+main_ed.add_node(5, pos=[300, 50], color = (255, 0, 0))
 
-# main_ed.add_edge(3,5)
-# main_ed.add_edge(2,5)
-# main_ed.add_edge(4,5)
-# main_ed.add_edge(3,2)
-# main_ed.add_edge(1,4)
+main_ed.add_edge(3,5)
+main_ed.add_edge(2,5)
+main_ed.add_edge(4,5)
+main_ed.add_edge(3,2)
+main_ed.add_edge(1,4)
 
 # write a piece of code that generates colors?
 
@@ -103,19 +103,20 @@ with dpg.handler_registry():
 dpg.show_viewport()
 dpg.set_primary_window("primary", True)
 while dpg.is_dearpygui_running():
-    # t0 = time.time()
     hkhandler.update()
+    # print('hkhandler.mouse_down_mode', hkhandler.mouse_down_mode)
+    # print("hkhandler", hkhandler)
+    # if hkhandler.release: print("RELASED")
     for action in action_dict:
         for hk in action_dict[action]:
             if hkhandler.is_hk_active(hk):
+                # print("hk", hk)
+                # print("action", action)
+                # print("mode", hkhandler.mouse_down_mode)
                 action_func_dict[action](hkhandler)
-    # t1 = time.time()
 
     for ed in ed_reg.editors.values():
         ed.update_window()
-    # t2 = time.time()
-    # print("hotkey == t1 - t0 = ", t1 - t0)
-    # print("TOTAL UPD == t2 - t1 = ", t2 - t1)
 
     # if not tested:
     #     tested = True
