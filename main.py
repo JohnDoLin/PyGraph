@@ -36,6 +36,7 @@ with dpg.window(label="Primary", tag="primary", width = 1000, height=600):
             with dpg.tab(label = "Main View", tag = "main_view"):
                     with dpg.drawlist(label = "Main", tag = "main", width = 600, height = 600, pos = [0, 0]):
                         pass
+
         with dpg.group(horizontal=False):
             ## GUI::Info ##
             with dpg.group():
@@ -101,27 +102,24 @@ with dpg.handler_registry():
 ################# Main Loop #################
 dpg.show_viewport()
 dpg.set_primary_window("primary", True)
+# t0, t1 = time.time()-1, time.time()
 while dpg.is_dearpygui_running():
+    # t0, t1 = t1, time.time()
     hkhandler.update()
-    # print('hkhandler.mouse_down_mode', hkhandler.mouse_down_mode)
-    # print("hkhandler", hkhandler)
-    # if hkhandler.release: print("RELASED")
     for action in action_dict:
         for hk in action_dict[action]:
             if hkhandler.is_hk_active(hk):
-                # print("hk", hk)
-                # print("action", action)
-                # print("mode", hkhandler.mouse_down_mode)
                 action_func_dict[action](hkhandler)
-
     for ed in ed_reg.editors.values():
         ed.update_window()
-
+    # t1 = time.time()
     # if not tested:
     #     tested = True
     #     test_alg()
     dpg.render_dearpygui_frame()
-
+    # if t1 != t0: print("fps =", 1/(t1-t0))
+    # else: print("fps =", "oo")
+    # print("lag =", time.time() - t0)
 dpg.destroy_context()
 
 

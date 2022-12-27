@@ -7,7 +7,7 @@ class Hotkey:
         self.release = args.get("release", False)
         self.strict = args.get("strict", True)
         self.condition = args.get("condition", None)
-    
+        self.press = args.get("press", False)
     def __str__(self):
         return f"Hotkey(mouse = {self.mouse}, kbd = {self.kbd}, wheel = {self.wheel}, release = {self.release})"
 

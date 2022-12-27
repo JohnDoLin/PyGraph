@@ -78,7 +78,7 @@ class Editor:
         for node in self.node_dict:
             nd = self.node_dict[node]
             if not nd.updated:
-                pop_list.append(node)                
+                pop_list.append(node)
             else:
                 nd.draw_node(window = self.window, scale = self.scale, offset = self.offset)
             nd.updated = False
@@ -101,6 +101,7 @@ class Editor:
         self.edge_dict[node_pair] = Edge(start = self.node_dict[node1], end = self.node_dict[node2], **kargs)
 
     def delete_node(self, node):
+        print("node got deleted:", node)
         self.graph.remove_nodes_from([node])
         dpg.delete_item(self.node_dict[node].uuid)
         dpg.delete_item(str(self.node_dict[node].uuid) + 'text')
@@ -108,7 +109,7 @@ class Editor:
 
     def delete_edge(self, np):
         np_tuple = tuple(np)
-        self.graph.remove_nodes_from([np_tuple])
+        self.graph.remove_edges_from([np_tuple])
         dpg.delete_item(self.edge_dict[np].uuid)
         del self.edge_dict[np]
     

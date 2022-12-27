@@ -46,7 +46,10 @@ def zoom(hkhandler):
                     ed.set_camera(ed.scale * 2**(hkhandler.wheel_speed), ed.offset + Vec2(hkhandler.pos)/ed.scale*(1-1/(2**(hkhandler.wheel_speed))))
     # print("zooming")
 
+
+
 def add_node(hkhandler):
+    # print(hkhandler)
     # if not hkhandler.press: return 
     if hkhandler.mouse_down_mode != None: return 
     # print("adding node")
@@ -70,33 +73,38 @@ def delete_node(hkhandler):
                     return
 
 def add_edge(hkhandler):
+    # print("add_edge")
     if not (
         hkhandler.mouse_down_mode == "-add_node" 
         or hkhandler.mouse_down_mode == "add_edge"
         or hkhandler.mouse_down_mode == None
         ): return
-    hkhandler.mouse_down_mode = "add_edge"
 
     if not hkhandler.release:
         if hkhandler.mouse_down_data != None: return 
         for window in hkhandler.hover_list:
             for ed in EdReg.editors.values():
                 if ed.window == window and len(hkhandler.hover_list[window]["node"]) != 0:
+                    hkhandler.mouse_down_mode = "add_edge"
                     hkhandler.mouse_down_data = {"node": hkhandler.hover_list[window]["node"][0]}
+                    # print("upd node")
                     return
-        hkhandler.mouse_down_mode = "-add_edge"
+        # hkhandler.mouse_down_mode = "-add_edge"
     else:
+        # print("RELEASED")
+        if hkhandler.mouse_down_mode != "add_edge": return
         for window in hkhandler.hover_list:
             for ed in EdReg.editors.values():
                 if ed.window == window and len(hkhandler.hover_list[window]["node"]) != 0:
                     if hkhandler.mouse_down_data["node"] == hkhandler.hover_list[window]["node"][0]:
-                        print("FAILED TO ADDING SELF LOOP")
+                        # print("FAILED TO ADD SELF LOOP")
+                        pass
                     else:
                         node_pair = frozenset({hkhandler.mouse_down_data["node"], hkhandler.hover_list[window]["node"][0]})
                         if node_pair not in ed.edge_dict:
                             ed.add_edge(hkhandler.mouse_down_data["node"], hkhandler.hover_list[window]["node"][0])
 def delete_edge(hkhandler):
-    print("deleting edge")
+    # print("deleting edge")
     if not (
     # hkhandler.mouse_down_mode == "-add_node" 
     hkhandler.mouse_down_mode == "delete_edge"
@@ -111,26 +119,30 @@ def delete_edge(hkhandler):
                 if ed.window == window and len(hkhandler.hover_list[window]["node"]) != 0:
                     hkhandler.mouse_down_data = {"node": hkhandler.hover_list[window]["node"][0]}
                     return
-        hkhandler.mouse_down_mode = "-delete_edge"
+        # hkhandler.mouse_down_mode = "-delete_edge"
     else:
+        # print("RELEASE")
         for window in hkhandler.hover_list:
             for ed in EdReg.editors.values():
                 if ed.window == window and len(hkhandler.hover_list[window]["node"]) != 0:
+                    # print("now node", hkhandler.hover_list[window]["node"][0])
+                    # print("start node", hkhandler.hover_list[window]["node"][0])
                     if hkhandler.mouse_down_data["node"] == hkhandler.hover_list[window]["node"][0]:
-                        print("FAILED TO DELETE SELF LOOP")
-                        ed.delete_node(hkhandler.mouse_down_data["node"])
+                        # print("FAILED TO DELETE SELF LOOP")
+                        # ed.delete_node(hkhandler.mouse_down_data["node"])
+                        pass
                     else:
                         node_pair = frozenset({hkhandler.mouse_down_data["node"], hkhandler.hover_list[window]["node"][0]})
                         if node_pair in ed.edge_dict:
                             ed.delete_edge(node_pair)
+                            # print("edge deleted: ", node_pair)
 
 action_func_dict = {
-                    # "add_edge": add_edge,
-                    # "delete_edge": delete_edge,
+                    "add_edge": add_edge,
+                    "delete_edge": delete_edge,
                     "pan": pan,
                     "zoom": zoom,
                     "drag_node": drag_node,
-                    # "eval_terminal": eval_terminal,
                     "add_node": add_node,
                     "delete_node": delete_node,
                     }

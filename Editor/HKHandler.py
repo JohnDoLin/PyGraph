@@ -5,7 +5,7 @@ import time
 from Structure.Vec2 import Vec2
 
 class HKHandler:
-    dragging_threashold = 0.1
+    dragging_threashold = 0.001
     dragging_mouse_btn = dpg.mvMouseButton_Left
     # check EditorRegister.editors
 
@@ -81,22 +81,23 @@ class HKHandler:
         if self.release:
             self.mouse_down_mode = None
             self.mouse_down_data = None
-
+            
         self.mouse = set()
-        self.press = False
-        self.release = False
-
         for btn in range(0, 10):
             if dpg.is_mouse_button_down(btn):
                 self.mouse.add(btn)
 
+        self.press = False
         if len(self.mouse) != 0 and self.down == False:
             self.down = True
             self.press_pos = self.pos
             self.press_tp = time.time()
             self.press = True
 
+        self.release = False
+
         if len(self.mouse) == 0 and self.down == True:
+            # print("RELEASED")
             self.down = False
             self.press_pos = self.pos
             self.release_tp = time.time()
@@ -156,6 +157,7 @@ class HKHandler:
                 and (self.kbd == hk.kbd)
                 and (not hk.wheel or self.is_wheel_updated)
                 and (not hk.release or self.release)
+                and (not hk.press or self.press)
                 ):
                 return True
         else:
@@ -164,6 +166,7 @@ class HKHandler:
                 and (self.kbd >= hk.kbd)
                 and (not hk.wheel or self.is_wheel_updated)
                 and (not hk.release or self.release)
+                and (not hk.press or self.press)
                 ):
                 return True
         return False
