@@ -40,8 +40,9 @@ with dpg.window(label="Primary", tag="primary", width = 1000, height=600):
         with dpg.group(horizontal=False):
             ## GUI::Info ##
             with dpg.group():
-                with dpg.tab_bar(label = "Info Tab Bar", tag = "info_bar"):
-                    with dpg.tab(label = "Info", tag = "info"):
+                with dpg.tab_bar(label = "Style Tab Bar", tag = "style_bar"):
+                    with dpg.tab(label = "Style", tag = "style"):
+
                         dpg.add_text(default_value="This is info text.")
 
             ## GUI::Constants / Control ##
@@ -65,6 +66,7 @@ with dpg.window(label="Primary", tag="primary", width = 1000, height=600):
 ################# Editor Register #################
 ed_reg = EditorRegister()
 # g = nx.grid_2d_graph(m = 7, n = 7)
+# g = nx.chvatal_graph()
 # main_ed = ed_reg.add_editor(window="main", graph = g)
 
 

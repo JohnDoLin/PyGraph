@@ -101,7 +101,7 @@ class Editor:
         self.edge_dict[node_pair] = Edge(start = self.node_dict[node1], end = self.node_dict[node2], **kargs)
 
     def delete_node(self, node):
-        print("node got deleted:", node)
+        # print("node got deleted:", node)
         self.graph.remove_nodes_from([node])
         dpg.delete_item(self.node_dict[node].uuid)
         dpg.delete_item(str(self.node_dict[node].uuid) + 'text')
