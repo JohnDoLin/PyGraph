@@ -22,12 +22,12 @@ shift_release_5 = Hotkey(mouse = {0, 5}, kbd = {16}, release = True)
 # unstrict_release = Hotkey(strict = False, release = True)
 
 action_dict = {
+                "pan": [down, down_5],
+                "zoom": [scroll],
                 "add_node": [ctrl_press],
                 "delete_node": [shift_release],
                 # "add_edge": [ctrl_press, ctrl_release, ctrl_press_5],
                 # "delete_edge": [shift_press, shift_release, shift_press_5, shift_release_5],
-                "pan": [down, down_5],
-                "zoom": [scroll],
                 "drag_node": [down, down_5],
                 # "eval_terminal": [enter],
                 }

@@ -18,16 +18,20 @@ class Node:
         self.updated = updated
         self.created = created
         self.style = {"color": color, "radius": radius}
+        self.text = self.uuid
 
     def __str__(self):
         return f"Node(pos = {self.pos}, vel = {self.vel}, uuid = {self.uuid}, updated = {self.updated})"
 
     def draw_node(self, window: str, scale: float = 1, offset: Vec2 = Vec2([0, 0])):
         pos_array = ((self.pos - offset) * scale).to_precision_array(8)
+        text_array = ((self.pos - offset + Vec2(0, self.style["radius"])) * scale).to_precision_array(8)
         if self.created:
             dpg.configure_item(self.uuid, center=pos_array, radius=self.style["radius"] * scale, fill = self.style["color"])
+            dpg.configure_item(str(self.uuid)+'text', pos=text_array, text=self.text, size=self.style["radius"] * scale)
         else:
-            dpg.draw_circle(pos_array, self.style["radius"] * scale, tag=self.uuid, parent= window, fill=self.style["color"])
+            dpg.draw_circle(pos_array, self.style["radius"] * scale, tag=self.uuid, parent= window, fill=self.style["color"], thickness=0)
+            dpg.draw_text(text_array, self.text, tag=str(self.uuid)+'text', parent=window, size=self.style["radius"] * scale)
             self.created = True
 
     def is_hovered(self, hkhandler, offset, scale):

@@ -103,6 +103,7 @@ class Editor:
     def delete_node(self, node):
         self.graph.remove_nodes_from([node])
         dpg.delete_item(self.node_dict[node].uuid)
+        dpg.delete_item(str(self.node_dict[node].uuid) + 'text')
         del self.node_dict[node]
 
     def delete_edge(self, np):
