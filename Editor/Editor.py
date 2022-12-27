@@ -13,10 +13,6 @@ class Editor:
     Editor will only show things in edge_dict and node_dict.
     '''
 
-
-    max_update_non_adjacent_node = 1
-    max_update_adjacent_node = 1
-
     def __init__(self, window = None, graph: nx.Graph = None):
         self.window = window
         if graph == None: graph = nx.Graph()
@@ -31,51 +27,23 @@ class Editor:
         return (pos - self.offset) * self.scale
     
     def update_window(self):
-        # t0 = time.time()
-
-        for node in self.graph:
-            non_adjacent_node_count = 0
-            adjacent_node_count = 0
-            # t1 = time.time()
-            if node in self.node_dict:
+        for n1 in self.graph:
+            if n1 in self.node_dict:
                 new_vel = Vec2(0, 0)
-                if non_adjacent_node_count >= Editor.max_update_non_adjacent_node:
-                    break
-                if adjacent_node_count >= Editor.max_update_adjacent_node:
-                    break
                 for n2 in self.graph.nodes:
-                    if n2 == node: continue
+                    if n2 == n1: continue
                     if n2 not in self.node_dict: continue
+                    p1, p2 = self.node_dict[n1].pos, self.node_dict[n2].pos
+                    n1_to_n2_normalized = (p2 - p1).normalized()
+                    new_vel += n1_to_n2_normalized * fs.attraction(p1, p2)
+                    new_vel -= n1_to_n2_normalized * fs.repulsion(p1, p2)
+                    if n2 in self.graph[n1]:
+                        new_vel += n1_to_n2_normalized * fs.edge_attraction(p1, p2)
 
-                    new_vel += (self.node_dict[n2].pos-self.node_dict[node].pos).normalized() * fs.attraction(self.node_dict[node].pos, self.node_dict[n2].pos)
-                    new_vel += (self.node_dict[node].pos-self.node_dict[n2].pos).normalized() * fs.repulsion(self.node_dict[node].pos, self.node_dict[n2].pos)
-                    if n2 not in self.graph[node]:
-                        non_adjacent_node_count += 1
-                    else:
-                        adjacent_node_count += 1
-                        new_vel += (self.node_dict[n2].pos-self.node_dict[node].pos).normalized() * fs.edge_attraction(self.node_dict[node].pos, self.node_dict[n2].pos)
-                        # if abs(new_vel.v[0]) >= abs(new_vel.v[1]): new_vel.v[1] *= -0.5
-                        # else: new_vel.v[0] *= -0.5
-                # for n2 in self.graph.nodes:
-                #     if n2 not in self.node_dict:
-                #         continue
-                #         # self.add_node(n2)
-                #     if node != n2: # Not needed?
-                #         new_vel += (self.node_dict[n2].pos-self.node_dict[node].pos).normalized() * fs.attraction(self.node_dict[node].pos, self.node_dict[n2].pos)
-                #         new_vel += (self.node_dict[node].pos-self.node_dict[n2].pos).normalized() * fs.repulsion(self.node_dict[node].pos, self.node_dict[n2].pos)
-                #     if n2 in self.graph[node] and n2 != node:
-                #         new_vel += (self.node_dict[n2].pos-self.node_dict[node].pos).normalized() * fs.edge_attraction(self.node_dict[node].pos, self.node_dict[n2].pos)
-                
-                # new_vel *= 0.5
-                # self.node_dict[node].vel += new_vel * dt
-                self.node_dict[node].pos += new_vel * dt
-                self.node_dict[node].updated = True
+                self.node_dict[n1].pos += new_vel * dt
+                self.node_dict[n1].updated = True
             else:
-                self.node_dict[node] = Node()
-            # t2 = time.time()
-            # print("t2 - t1", t2 - t1)
-        # t3 = time.time()
-        # print('update node pos and vel and mark updated = t3 - t0 =', t3 - t0)
+                self.node_dict[n1] = Node()
 
         for node_pair in list(self.graph.edges):
             # For now I ignore parallel edges (i.e. multiedges) bc I literally don't care about them
@@ -93,9 +61,6 @@ class Editor:
                 self.add_edge(node_pair[0], node_pair[1])
             else:
                 self.edge_dict[node_fs].updated = True
-        # Computing edge attraction force 
-        # for node in self.graph:
-            # for n2 in self.graph.neighbors(node):
 
         # Draw the edge first so it would be on the back 
         pop_list = []
@@ -107,7 +72,6 @@ class Editor:
                 edge.draw_edge(window = self.window, scale = self.scale, offset = self.offset)
             edge.updated = False
         for np in pop_list:
-            # self.edge_dict.pop(np)
             self.delete_edge(np)
 
         pop_list = []
@@ -120,7 +84,6 @@ class Editor:
             nd.updated = False
         for nd in pop_list:
             self.delete_node(nd)
-        # print()
 
     def add_node(self, node = None, pos = [0,0], **kargs):
         if node not in self.node_dict:
@@ -137,7 +100,6 @@ class Editor:
         self.add_node(node2)
         self.edge_dict[node_pair] = Edge(start = self.node_dict[node1], end = self.node_dict[node2], **kargs)
 
-
     def delete_node(self, node):
         self.graph.remove_nodes_from([node])
         dpg.delete_item(self.node_dict[node].uuid)
@@ -148,9 +110,14 @@ class Editor:
         self.graph.remove_nodes_from([np_tuple])
         dpg.delete_item(self.edge_dict[np].uuid)
         del self.edge_dict[np]
+    
+    def set_node(self, node, **kargs):
+        for key in kargs:
+            self.node_dict[node].key = kargs[key]
 
-    # def set_node(self, node, data):
-    #     pass
+    def set_edge(self, np, **kargs):
+        for key in kargs:
+            self.edge_dict[np].key = kargs[key]
 
     def set_camera(self, scale: float, offset: list):
         self.scale = scale

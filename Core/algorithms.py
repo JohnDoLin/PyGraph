@@ -3,13 +3,13 @@ import networkx as nx
 from Core.Node import Node
 from Core.Edge import Edge
 import math
+import time
 
 ### default colors ###
 node_df = (255,255,255,255)
 edge_df = (255,255,255,255)
 node_dfhl = (255,0,255,255)
 edge_dfhl = (255,0,255,255)
-
 
 ### highlight ###
 def hl_node(ed, nodes, hl:tuple = node_dfhl): # highlights a node, or nodes in a list
@@ -26,9 +26,36 @@ def hl_edge(ed, edges, hl:tuple = node_dfhl): # highlights an edge, or edges in 
             edge = frozenset({edge[0], edge[1]})
             ed.edge_dict[edge].set_style(color = hl)
     else:
-        ed.edge_dict[edges].set_style(color = hl)
+        edge = frozenset({edges[0], edges[1]})
+        ed.edge_dict[edge].set_style(color = hl)
     return None
     
+## Example Algorithms
+
+visited = set() # Set to keep track of visited nodes of graph.
+def dfs_tree_animation(ed, source, visited):
+    if source not in visited:
+        # print(node)
+        visited.add(source)
+        hl_node(ed, source) # Visited
+        time.sleep(0.25)
+        for neighbour in ed.graph[source]:
+            hl_edge(ed, (source, neighbour))
+            time.sleep(0.25)
+            dfs_tree_animation(ed, neighbour, visited)
+    # visited = set()
+
+# Driver Code
+# print("Following is the Depth-First Search")
+# dfs(ed, visited)
+
+
+
+
+
+
+
+
 
 ### distance properties ###
 def dist(ed, source, target): # returns distance between source and target nodes

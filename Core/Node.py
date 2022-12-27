@@ -19,6 +19,9 @@ class Node:
         self.created = created
         self.style = {"color": color, "radius": radius}
 
+    def __str__(self):
+        return f"Node(pos = {self.pos}, vel = {self.vel}, uuid = {self.uuid}, updated = {self.updated})"
+
     def draw_node(self, window: str, scale: float = 1, offset: Vec2 = Vec2([0, 0])):
         pos_array = ((self.pos - offset) * scale).to_precision_array(8)
         if self.created:

@@ -41,7 +41,7 @@ class Vec2:
         return self.v[0] * other.v[1] - self.v[1] * other.v[0]
 
     def dist_to_two_dots(self, vec1, vec2):
-        if vec2 == vec1:
+        if (vec2 - vec1).norm() == 0:
             return math.inf
         return abs((vec2 - vec1).det(self - vec1)) / (vec2 - vec1).norm()
     

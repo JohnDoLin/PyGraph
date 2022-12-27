@@ -14,6 +14,10 @@ class Force:
     # c4 = 0
     # m = 100
 
+    def fast_force(pos1, pos2):
+        pass
+
+
     def attraction(pos1, pos2):
         if Vec2.dist(pos1, pos2) == 0:
             return 0
