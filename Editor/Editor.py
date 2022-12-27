@@ -87,7 +87,7 @@ class Editor:
 
     def add_node(self, node = None, pos = [0,0], **kargs):
         if node not in self.node_dict:
-            if node == None:
+            if node == None or node == 0:
                 node = str((UUID.uuid4()).int)[:8]
             self.node_dict[node] = Node(uuid = node, pos = Vec2(pos), **kargs)
             self.graph.add_node(self.node_dict[node].uuid)
