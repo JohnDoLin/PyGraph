@@ -70,6 +70,61 @@ def dfs_tree_animation(ed, source, visited = set()):
             time.sleep(0.25)
             dfs_tree_animation(ed, neighbour, visited)
     # visited = set()
+    
+def dijkstra_animation(ed, source, target):
+    checked_color = (0, 255, 0)
+    checking_color = (0, 0, 255)
+    result_color = (255, 0, 0)
+    
+    hl_node(ed, [source, target])
+    
+    def dist_sort(node):
+        return G.nodes[node]['dist']
+    
+    G = nx.Graph()
+    G.add_nodes_from(ed.graph)
+    G.add_edges_from(ed.graph.edges)
+    unvisited = [node for node in G.nodes]
+    attrs = {node: {'dist': math.inf, 'prev': None} for node in G.nodes}
+    nx.set_node_attributes(G, attrs)
+    current = source
+    G.nodes[current]['dist'] = 0
+    unvisited.sort(key = dist_sort)
+    while G.nodes[unvisited[0]]['dist'] < math.inf and target in unvisited:
+        ed.node_dict[current].set_style(color = checking_color)
+        time.sleep(0.25)
+        for node in G.adj[current]:
+            if node in unvisited:
+                ed.node_dict[node].set_style(color = checking_color)
+                ed.edge_dict[frozenset([node, current])].set_style(color = checking_color)
+                time.sleep(0.25)
+                reset_node(ed, node)
+                if node == target:
+                    hl_node(ed, node) # color of target node during search?
+                reset_edge(ed, frozenset([node, current]))
+                if G.nodes[node]['dist'] > 1 + G.nodes[current]['dist']:
+                    G.nodes[node]['dist'] = 1 + G.nodes[current]['dist']
+                    G.nodes[node]['prev'] = current
+        unvisited.remove(current)
+        unvisited.sort(key = dist_sort)
+        ed.node_dict[current].set_style(color = checked_color)
+        if current == source:
+            hl_node(ed, current) # color of source node during search?
+        if G.nodes[current]['prev'] != None:
+            ed.edge_dict[frozenset([current, G.nodes[current]['prev']])].set_style(color = checked_color)
+        time.sleep(0.25)
+        if len(unvisited) == 0:
+            break
+        current = unvisited[0]
+        
+    trace_back = target
+    while G.nodes[trace_back]['prev'] != None:
+        ed.edge_dict[frozenset([trace_back, G.nodes[trace_back]['prev']])].set_style(color = result_color)
+        trace_back = G.nodes[trace_back]['prev']
+    ed.node_dict[source].set_style(color = result_color)
+    ed.node_dict[target].set_style(color = result_color)
+         
+    return None
 
 
 ### distance properties ###
