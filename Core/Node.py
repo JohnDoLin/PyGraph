@@ -18,6 +18,7 @@ class Node:
         self.updated = updated
         self.created = created
         self.style = {"color": color, "radius": radius}
+        self.initial_style = {"color": color, "radius": radius}
         self.text = self.uuid
 
     def __str__(self):

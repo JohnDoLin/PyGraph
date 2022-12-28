@@ -29,11 +29,37 @@ def hl_edge(ed, edges, hl:tuple = node_dfhl): # highlights an edge, or edges in 
         edge = frozenset({edges[0], edges[1]})
         ed.edge_dict[edge].set_style(color = hl)
     return None
+
+def reset_node(ed, *args): # resets node(s) back to initial style
+    if len(args) == 0:
+        for node in ed.node_dict:
+            reset_node(ed, node)
+        return None
+    for node in args:
+        ed.node_dict[node].set_style(color = ed.node_dict[node].initial_style["color"], radius = ed.node_dict[node].initial_style["radius"])
+    return None
+
+def reset_edge(ed, *args): # resets edge(s) back to initial style
+    if len(args) == 0:
+        for edge in ed.edge_dict:
+            reset_edge(ed, edge)
+        return None
+    for edge in args:
+        ed.edge_dict[edge].set_style(color = ed.edge_dict[edge].initial_style["color"], thickness = ed.edge_dict[edge].initial_style["thickness"])
+    return None
+
+def reset_all(ed): # reset all nodes and edges
+    for node in ed.node_dict:
+            reset_node(ed, node)
+    for edge in ed.edge_dict:
+            reset_edge(ed, edge)
+    return None
     
+
 ## Example Algorithms
 
 visited = set() # Set to keep track of visited nodes of graph.
-def dfs_tree_animation(ed, source, visited):
+def dfs_tree_animation(ed, source, visited = set()):
     if source not in visited:
         # print(node)
         visited.add(source)

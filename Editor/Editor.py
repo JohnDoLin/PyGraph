@@ -113,7 +113,12 @@ class Editor:
         self.graph.remove_edges_from([np_tuple])
         dpg.delete_item(self.edge_dict[np].uuid)
         del self.edge_dict[np]
-    
+        
+    def clear(self):
+        queue = [node for node in self.node_dict]
+        for node in queue:
+            self.delete_node(node)
+            
     def set_node(self, node, **kargs):
         for key in kargs:
             self.node_dict[node].key = kargs[key]
