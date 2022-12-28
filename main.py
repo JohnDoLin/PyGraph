@@ -15,7 +15,7 @@ dpg.create_context()
 dpg.create_viewport()
 dpg.setup_dearpygui()
 
-# dpg.show_style_editor()
+dpg.show_style_editor()
 # dpg.show_item_registry()
 
 # dpg.show_debug()
@@ -68,62 +68,101 @@ def style_cb(sender, data):
         # hkhandler.selection
     # print(sender, data)
 
+# with dpg.handler_registry():
+#     with dpg.add_resize_handler(parent="primary"):
+def resize_cb():
+    # print(kargs)
+    dpg.configure_item("main", height=dpg.get_item_height("primary")*0.9, width=dpg.get_item_width("primary")/4*3)
+    # dpg.configure_item("graph_group", width=dpg.get_item_width("primary")/4)
+    dpg.configure_item("side_window", height=dpg.get_item_height("primary") * 0.9, width=dpg.get_item_width("primary")/5, show=True)
+
+# dpg.set_viewport_resize_callback(callback=resize_cb)
 ################# GUI #################
 ## GUI::Main ##
-with dpg.window(label="Primary", tag="primary", width = 1000, height=600):
-    with dpg.group(horizontal=True, width=dpg.get_item_width("primary")/4*3):
-        with dpg.tab_bar(label = "Graph View Bar", tag = "view_bar"):
+with dpg.window(label="Primary", tag="primary", width = 1000, height=600, no_scrollbar=True, horizontal_scrollbar=False, autosize=False, no_bring_to_front_on_focus=True):
+    with dpg.group(horizontal=True, width=dpg.get_item_width("primary")/4*3, tag="graph_group"):
+        with dpg.tab_bar(label = "Graph View Bar", tag = "view_bar", reorderable=True):
             with dpg.tab(label = "Main View", tag = "main_view"):
                     with dpg.drawlist(label = "Main", tag = "main", width = 600, height = 600, pos = [0, 0]):
                         pass
 
         with dpg.group(horizontal=False, width=dpg.get_item_width("primary")/4):
             ## GUI::Style ##
+            # with dpg.group():
+                # with dpg.tab_bar(label = "Style Tab Bar", tag = "style_bar"):
+        ## GUI::Info ##
             with dpg.group():
-                with dpg.tab_bar(label = "Style Tab Bar", tag = "style_bar"):
-                    with dpg.tab(label = "Style", tag = "style"):
-                        dpg.add_text(f"Current Selection: None", tag="current_selection")
-                        with dpg.group(tag="node_style_menu", horizontal=True, show=False):
-                            with dpg.group():
-                                dpg.add_color_picker((0, 0, 0, 255), tag="node_color", width=200, height=200, label="Color", callback=style_cb)
-                                dpg.add_slider_double(tag="node_radius", label="Radius", min_value=0.1, max_value=100, width=200, callback=style_cb)
-                                dpg.add_input_text(tag="node_text", label="Text", width=200, callback=style_cb)
-                            with dpg.group():
-                                dpg.add_color_picker((0, 0, 0, 255), tag="node_border_color", width=200, height=200, label="Border Color", callback=style_cb)
-                                dpg.add_slider_double(label="Border Width", tag="node_border_width", min_value=0.1, max_value=100, width=200, callback=style_cb)
-                        with dpg.group(tag="edge_style_menu", show=False):
-                            with dpg.group(horizontal=True):
+                # with dpg.add_listbox()
+            # with dpg.child_window(tag="side_window", ):
+            # with dpg.add_dummy()
+                with dpg.tab_bar(label = "Info Tab Bar", tag="info_bar", reorderable=True):
+                    with dpg.tab(label="Info", tag="info"):
+                        dpg.add_text(f"Some Information of this Graph:")
+                        # with dpg.collapsing_header(label="Textures & Images"):
+                        with dpg.tree_node(label="Profile", selectable=True, default_open=True):
+                            # dpg.add_separator()
+                            dpg.add_text(f"Number of Vertices:", bullet=True)
+                            dpg.add_text(f"Number of Edges:", bullet=True)
+                            dpg.add_text(f"Vertices:", bullet=True)
+                            dpg.add_text(f"Edges:", bullet=True)
+                        with dpg.tree_node(label="Basic Properties", selectable=True, default_open=True):
+                            # dpg.add_separator()
+                            dpg.add_text(f"Number of Components:", bullet=True)
+                            dpg.add_text(f"Is Connected?", bullet=True)
+                            dpg.add_text(f"Centroid:", bullet=True)
+                            dpg.add_text(f"Diameter:", bullet=True)
+                        with dpg.tree_node(label="Statistics", selectable=True, default_open=True):
+                            # dpg.add_separator()
+                            dpg.add_text(f"Maximum Degree:", bullet=True)
+                            dpg.add_text(f"Minimum Degree:", bullet=True)
+                    with dpg.tab(label="Queries"):
+                        dpg.add_button(label="Clear All Highlights")
+                        with dpg.group(horizontal=True):
+                            dpg.add_text("Shortest Path from", bullet=True)
+                            dpg.add_input_text(width=50)
+                            dpg.add_text("to")
+                            dpg.add_input_text(width=50)
+                            dpg.add_button(label="Highlight One of the Paths")
+                        # dpg.add_button(label="Highlight One of the Paths")
+                ## GUI::Constants / Control ##
+                with dpg.group():
+                    with dpg.tab_bar(label = "Control Tab Bar", tag = "control_bar", reorderable=True):
+                        with dpg.tab(label = "Control", tag = "control"):
+                            dpg.add_slider_double(label="c1", tag="c1", callback=constant_cb, default_value=Force.constants[1], min_value=0.001, max_value=10, width=600)
+                            dpg.add_slider_double(label="c2", tag="c2", callback=constant_cb, default_value=Force.constants[2], min_value=1, max_value=1000, width=600)
+                            dpg.add_slider_double(label="c3", tag="c3", callback=constant_cb, default_value=Force.constants[3], min_value=1, max_value=10000000, width=600)
+                            dpg.add_slider_double(label="c4", tag="c4", callback=constant_cb, default_value=Force.constants[4], min_value=0, max_value=100, width=600)
+                        with dpg.tab(label = "Style", tag = "style"):
+                            dpg.add_text(f"Current Selection: None", tag="current_selection")
+                            with dpg.group(tag="node_style_menu", horizontal=True, show=False):
                                 with dpg.group():
-                                    dpg.add_color_picker((0, 0, 0, 255), tag="edge_color", width=200, height=200, label="Color", callback=style_cb)
-                                    dpg.add_slider_double(label="Thickness", tag="edge_thickness", min_value=0.1, max_value=100, width=200, callback=style_cb)
-                                # with dpg.group():
-                                #     dpg.add_color_picker((0, 0, 0, 255), width=200, height=200, label="border_color")
-                                #     dpg.add_slider_double(label="Border width", min_value=0.1, max_value=100, width=200)
-            
-            ## GUI::Constants / Control ##
-            with dpg.group():
-                with dpg.tab_bar(label = "Control Tab Bar", tag = "control_bar"):
-                    with dpg.tab(label = "Control", tag = "control"):
-                        dpg.add_slider_double(label="c1", tag="c1", callback=constant_cb, default_value=Force.constants[1], min_value=0.001, max_value=10, width=600)
-                        dpg.add_slider_double(label="c2", tag="c2", callback=constant_cb, default_value=Force.constants[2], min_value=1, max_value=1000, width=600)
-                        dpg.add_slider_double(label="c3", tag="c3", callback=constant_cb, default_value=Force.constants[3], min_value=1, max_value=10000000, width=600)
-                        dpg.add_slider_double(label="c4", tag="c4", callback=constant_cb, default_value=Force.constants[4], min_value=0, max_value=100, width=600)
+                                    dpg.add_color_picker((0, 0, 0, 255), tag="node_color", width=200, height=200, label="Color", callback=style_cb)
+                                    dpg.add_slider_double(tag="node_radius", label="Radius", min_value=0.1, max_value=100, width=200, callback=style_cb)
+                                    dpg.add_input_text(tag="node_text", label="Text", width=200, callback=style_cb)
+                                with dpg.group():
+                                    dpg.add_color_picker((0, 0, 0, 255), tag="node_border_color", width=200, height=200, label="Border Color", callback=style_cb)
+                                    dpg.add_slider_double(label="Border Width", tag="node_border_width", min_value=0.1, max_value=100, width=200, callback=style_cb)
+                            with dpg.group(tag="edge_style_menu", show=False):
+                                with dpg.group(horizontal=True):
+                                    with dpg.group():
+                                        dpg.add_color_picker((0, 0, 0, 255), tag="edge_color", width=200, height=200, label="Color", callback=style_cb)
+                                        dpg.add_slider_double(label="Thickness", tag="edge_thickness", min_value=0.1, max_value=100, width=200, callback=style_cb)
 
-
-            ## GUI::Terminal ##
-            with dpg.group():
-                with dpg.tab_bar(label = "Terminal Tab Bar", tag = "terminal_bar"):
-                    with dpg.tab(label = "Terminal", tag = "terminal_tab"):
-                        dpg.add_input_text(tag='terminal', multiline=True, default_value="alg.hl_shortest_path(main_ed, (0, 0), (1, 2))", width=600)
-                        dpg.add_button(tag="terminal_run", label="Run", callback=terminal_callback)
-                        dpg.add_text(tag="terminal_result", wrap=600)
-
+                ## GUI::Terminal ##
+                with dpg.group():
+                    with dpg.tab_bar(label = "Terminal Tab Bar", tag = "terminal_bar", reorderable=True):
+                        with dpg.tab(label = "Terminal", tag = "terminal_tab"):
+                            dpg.add_input_text(tag='terminal', multiline=True, default_value="alg.hl_shortest_path(main_ed, (0, 0), (1, 2))", width=600)
+                            dpg.add_button(tag="terminal_run", label="Run", callback=terminal_callback)
+                            dpg.add_text(tag="terminal_result", wrap=600)
+                        with dpg.tab(label = "History", tag="history"):
+                            dpg.add_text("History of the terminal")
 
 # dpg.toggle_viewport_fullscreen()
 
 ################# Editor Register #################
 ed_reg = EditorRegister()
-g = nx.grid_2d_graph(m = 3, n = 3)
+g = nx.grid_2d_graph(m = 5, n = 5)
 # g = nx.chvatal_graph()
 main_ed = ed_reg.add_editor(window="main", graph = g)
 
@@ -163,6 +202,7 @@ with dpg.handler_registry():
 ################# Main Loop #################
 dpg.show_viewport()
 dpg.set_primary_window("primary", True)
+
 # t0, t1 = time.time()-1, time.time()
 # min_fps = 1000
 # max_lag = 0

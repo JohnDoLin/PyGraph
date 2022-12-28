@@ -39,14 +39,13 @@ def drag_node(hkhandler):
 
 def zoom(hkhandler):
     # print("zooming")
+    zooming_ratio = 1.5
     for window in hkhandler.hover_list:
         if (len(hkhandler.hover_list) != 0):
             for ed in EdReg.editors.values():
                 if ed.window == window:
-                    ed.set_camera(ed.scale * 2**(hkhandler.wheel_speed), ed.offset + Vec2(hkhandler.pos)/ed.scale*(1-1/(2**(hkhandler.wheel_speed))))
+                    ed.set_camera(ed.scale * zooming_ratio**(hkhandler.wheel_speed), ed.offset + Vec2(hkhandler.pos)/ed.scale*(1-1/(zooming_ratio**(hkhandler.wheel_speed))))
     # print("zooming")
-
-
 
 def add_node(hkhandler):
     # print(hkhandler)
