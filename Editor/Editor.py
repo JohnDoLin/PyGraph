@@ -39,11 +39,10 @@ class Editor:
                     new_vel -= n1_to_n2_normalized * fs.repulsion(p1, p2)
                     if n2 in self.graph[n1]:
                         new_vel += n1_to_n2_normalized * fs.edge_attraction(p1, p2)
-
                 self.node_dict[n1].pos += new_vel * dt
                 self.node_dict[n1].updated = True
             else:
-                self.node_dict[n1] = Node()
+                self.node_dict[n1] = Node(uuid = str(n1))
 
         for node_pair in list(self.graph.edges):
             # For now I ignore parallel edges (i.e. multiedges) bc I literally don't care about them
@@ -88,7 +87,9 @@ class Editor:
     def add_node(self, node = None, pos = [0,0], **kargs):
         if node not in self.node_dict:
             if node == None or node == 0:
+            # if node == None:
                 node = str((UUID.uuid4()).int)[:8]
+            # if node == 0: node = "0"
             self.node_dict[node] = Node(uuid = node, pos = Vec2(pos), **kargs)
             self.graph.add_node(self.node_dict[node].uuid)
 

@@ -45,17 +45,6 @@ def dfs_tree_animation(ed, source, visited):
             dfs_tree_animation(ed, neighbour, visited)
     # visited = set()
 
-# Driver Code
-# print("Following is the Depth-First Search")
-# dfs(ed, visited)
-
-
-
-
-
-
-
-
 
 ### distance properties ###
 def dist(ed, source, target): # returns distance between source and target nodes
@@ -64,9 +53,11 @@ def dist(ed, source, target): # returns distance between source and target nodes
 def hl_shortest_path(ed, source, target, node_hl = node_dfhl, edge_hl = edge_dfhl): # highlights a shortest path between source and target nodes
    
     path = list(nx.shortest_simple_paths(ed.graph, source, target))[0]
-    hl_node(ed, [path[0], path[-1]], node_hl)
-    
+    # hl_node(ed, [path[0], path[-1]], node_hl)
+    # print("path", path)
     if len(path)>1:
+        # print("path[0]", path[0])
+        hl_node(ed, [path[i] for i in range(len(path))], node_hl)
         hl_edge(ed, [(path[i],path[i+1]) for i in range(len(path)-1)], edge_hl)
     return None
 
