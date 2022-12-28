@@ -36,6 +36,8 @@ class HKHandler:
         self.mouse_down_mode = None
         self.mouse_down_data = None
     
+        self.selection = (None, None, None)
+
     def __str__(self):
         return f'''HKHandler(
                             mouse = {self.mouse},

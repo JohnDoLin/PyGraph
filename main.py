@@ -22,7 +22,7 @@ dpg.setup_dearpygui()
 # dpg.show_metrics()
 
 terminal_rs = ""
-################# Terminal Function #################
+################# Misc Function #################
 def terminal_callback(sender, data):
     global terminal_rs
     old_stdout = sys.stdout
@@ -37,6 +37,37 @@ def terminal_callback(sender, data):
 def constant_cb(sender, data):
     Force.constants[int(sender[1:])] = data
 
+def style_cb(sender, data):
+    if hkhandler.selection[2] == None: return 
+    item_type = hkhandler.selection[1]
+    item = None
+    for ed in EditorRegister.editors.values():
+        if ed.window == hkhandler.selection[2]:
+            if item_type == "node":
+                item = ed.node_dict[hkhandler.selection[0]]
+            else:
+                item = ed.edge_dict[hkhandler.selection[0]]
+    if sender == "node_color":
+        item.style["color"] = tuple(map(lambda x: x*255, data))
+    elif sender == "node_radius":
+        item.style["radius"] = data
+    elif sender == "node_text":
+        item.text = data
+    elif sender == "node_border_color":
+        item.style["border_color"] = tuple(map(lambda x: x*255, data))
+    elif sender == "node_border_width":
+        item.style["border_width"] = data
+    elif sender == "edge_color":
+        item.style["color"] = tuple(map(lambda x: x*255, data))
+    elif sender == "edge_thickness":
+        item.style["thickness"] = data
+        
+    # if hkhandler.selection[1] == "node":
+
+    # if sender == "node_color":
+        # hkhandler.selection
+    # print(sender, data)
+
 ################# GUI #################
 ## GUI::Main ##
 with dpg.window(label="Primary", tag="primary", width = 1000, height=600):
@@ -47,12 +78,28 @@ with dpg.window(label="Primary", tag="primary", width = 1000, height=600):
                         pass
 
         with dpg.group(horizontal=False, width=dpg.get_item_width("primary")/4):
-            ## GUI::Info ##
+            ## GUI::Style ##
             with dpg.group():
                 with dpg.tab_bar(label = "Style Tab Bar", tag = "style_bar"):
                     with dpg.tab(label = "Style", tag = "style"):
-                        dpg.add_text(default_value="This is info text.")
-
+                        dpg.add_text(f"Current Selection: None", tag="current_selection")
+                        with dpg.group(tag="node_style_menu", horizontal=True, show=False):
+                            with dpg.group():
+                                dpg.add_color_picker((0, 0, 0, 255), tag="node_color", width=200, height=200, label="Color", callback=style_cb)
+                                dpg.add_slider_double(tag="node_radius", label="Radius", min_value=0.1, max_value=100, width=200, callback=style_cb)
+                                dpg.add_input_text(tag="node_text", label="Text", width=200, callback=style_cb)
+                            with dpg.group():
+                                dpg.add_color_picker((0, 0, 0, 255), tag="node_border_color", width=200, height=200, label="Border Color", callback=style_cb)
+                                dpg.add_slider_double(label="Border Width", tag="node_border_width", min_value=0.1, max_value=100, width=200, callback=style_cb)
+                        with dpg.group(tag="edge_style_menu", show=False):
+                            with dpg.group(horizontal=True):
+                                with dpg.group():
+                                    dpg.add_color_picker((0, 0, 0, 255), tag="edge_color", width=200, height=200, label="Color", callback=style_cb)
+                                    dpg.add_slider_double(label="Thickness", tag="edge_thickness", min_value=0.1, max_value=100, width=200, callback=style_cb)
+                                # with dpg.group():
+                                #     dpg.add_color_picker((0, 0, 0, 255), width=200, height=200, label="border_color")
+                                #     dpg.add_slider_double(label="Border width", min_value=0.1, max_value=100, width=200)
+            
             ## GUI::Constants / Control ##
             with dpg.group():
                 with dpg.tab_bar(label = "Control Tab Bar", tag = "control_bar"):
@@ -62,6 +109,7 @@ with dpg.window(label="Primary", tag="primary", width = 1000, height=600):
                         dpg.add_slider_double(label="c3", tag="c3", callback=constant_cb, default_value=Force.constants[3], min_value=1, max_value=10000000, width=600)
                         dpg.add_slider_double(label="c4", tag="c4", callback=constant_cb, default_value=Force.constants[4], min_value=0, max_value=100, width=600)
 
+
             ## GUI::Terminal ##
             with dpg.group():
                 with dpg.tab_bar(label = "Terminal Tab Bar", tag = "terminal_bar"):
@@ -69,6 +117,7 @@ with dpg.window(label="Primary", tag="primary", width = 1000, height=600):
                         dpg.add_input_text(tag='terminal', multiline=True, default_value="alg.hl_shortest_path(main_ed, (0, 0), (1, 2))", width=600)
                         dpg.add_button(tag="terminal_run", label="Run", callback=terminal_callback)
                         dpg.add_text(tag="terminal_result", wrap=600)
+
 
 # dpg.toggle_viewport_fullscreen()
 

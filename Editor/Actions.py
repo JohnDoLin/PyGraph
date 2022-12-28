@@ -137,6 +137,38 @@ def delete_edge(hkhandler):
                             ed.delete_edge(node_pair)
                             # print("edge deleted: ", node_pair)
 
+def selection(hkhandler):
+    # print("selecting")
+    for window in hkhandler.hover_list:
+        for ed in EdReg.editors.values():
+            if ed.window == window:
+                if len(hkhandler.hover_list[window]["node"]) != 0:
+                    hkhandler.selection = (hkhandler.hover_list[window]["node"][0], "node", window)
+                    node_name = hkhandler.selection[0]
+                    nd = ed.node_dict[node_name]
+                    dpg.configure_item(item="node_style_menu", show=True)
+                    dpg.configure_item(item="edge_style_menu", show=False)
+                    dpg.configure_item(item="node_color", default_value=nd.style["color"])
+                    dpg.configure_item(item="node_radius", default_value=nd.style["radius"])
+                    dpg.configure_item(item="node_text", default_value=nd.text)
+                    dpg.configure_item(item="node_border_color", default_value=nd.style["border_color"])
+                    dpg.configure_item(item="node_border_width", default_value=nd.style["border_width"])
+                elif len(hkhandler.hover_list[window]["edge"]) != 0:
+                    hkhandler.selection = (hkhandler.hover_list[window]["edge"][0], "edge", window)
+                    dpg.configure_item(item="node_style_menu", show=False)
+                    dpg.configure_item(item="edge_style_menu", show=True)
+                    edge_name = hkhandler.selection[0]
+                    edge = ed.edge_dict[edge_name]
+                    dpg.configure_item(item="edge_color", default_value=edge.style["color"])
+                    dpg.configure_item(item="edge_thickness", default_value=edge.style["thickness"])
+                else:
+                    hkhandler.selection = (None, None, None)
+                    dpg.configure_item(item="node_style_menu", show=False)
+                    dpg.configure_item(item="edge_style_menu", show=False)
+                dpg.set_value("current_selection", f"Current Selection: {hkhandler.selection[0]}")
+                # print('hkhandler.selection', f"Current Selection: {hkhandler.selection}")
+                return
+
 action_func_dict = {
                     "add_edge": add_edge,
                     "delete_edge": delete_edge,
@@ -145,4 +177,5 @@ action_func_dict = {
                     "drag_node": drag_node,
                     "add_node": add_node,
                     "delete_node": delete_node,
+                    "selection": selection,
                     }
