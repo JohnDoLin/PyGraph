@@ -115,9 +115,9 @@ def update_info():
     dpg.set_value("info_max_deg", M)
     dpg.set_value("info_min_deg", m)
 
-    # dpg.set_value("info_edges_num", main_ed.graph.number_of_edges())
-    # pass
-
+def dijkstra_cb():
+    s, t = eval(dpg.get_value("dijkstra_source")), eval(dpg.get_value("dijkstra_target"))
+    alg.dijkstra_animation(main_ed, s, t)
 
 ################# GUI #################
 text_hl_color = (255, 255, 0)
@@ -176,6 +176,12 @@ with dpg.window(label="Primary", tag="primary", width = 1000, height=600, no_scr
                             dpg.add_text("to")
                             dpg.add_input_text(width=50, tag="shortest_path_target")
                             dpg.add_button(label="Highlight One of the Paths", callback=hl_shortest_path_cb)
+                        with dpg.group(horizontal=True):
+                            dpg.add_text("Dijkstra from", bullet=True)
+                            dpg.add_input_text(width=50, tag="dijkstra_source")
+                            dpg.add_text("to")
+                            dpg.add_input_text(width=50, tag="dijkstra_target")
+                            dpg.add_button(label="Show Animation", callback=dijkstra_cb)
                ## GUI::Constants / Control ##
                 with dpg.tab_bar(label = "Control Tab Bar", tag = "control_bar", reorderable=True):
                     with dpg.tab(label = "Style", tag = "style"):
