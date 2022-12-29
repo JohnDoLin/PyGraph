@@ -9,7 +9,7 @@ class HKHandler:
     dragging_mouse_btn = dpg.mvMouseButton_Left
     # check EditorRegister.editors
 
-    mouse_calibration = [8, 12]
+    # mouse_calibration = [8, 12]
     # mouse_calibration = [8, 12]
     mouse_calibration = [8, 31]
 
@@ -64,8 +64,6 @@ class HKHandler:
         return self.__str__()
 
     def update_wheel(self, sender, data):
-        # print("data", data)
-        # self.is_wheel_updated = True
         self.wheel_sum += data
 
     def update(self):
@@ -76,10 +74,7 @@ class HKHandler:
                 self.kbd.add(key)
 
          # Global -- mouse position
-        # self.pos = dpg.get_mouse_pos(local=True)
-        # self.pos = dpg.get_mouse_pos(local=False)
         self.pos = dpg.get_mouse_pos()
-        # print(dpg.get_drawing_mouse_pos(), dpg.get_mouse_pos(local=False))
         self.pos = dpg.get_mouse_pos(local=False)
         self.pos = [self.pos[0] - HKHandler.mouse_calibration[0], self.pos[1] - HKHandler.mouse_calibration[1]]
 
@@ -118,14 +113,11 @@ class HKHandler:
 
 
         # Global -- mouse dragging
-        # self.delta = dpg.get_mouse_drag_delta() ## Bad :(
         self.is_dragging = False
-        # if dpg.is_mouse_button_dragging(HKHandler.dragging_mouse_btn, HKHandler.dragging_threashold):
         if self.down and (Vec2(self.press_pos) - Vec2(self.pos)).norm() >= HKHandler.dragging_threashold:  
             self.is_dragging = True
             self.deltadelta = [self.pos[0] - self.press_pos[0] - self.delta[0], self.pos[1] - self.press_pos[1] - self.delta[1]]
             self.delta = [self.pos[0] - self.press_pos[0], self.pos[1] - self.press_pos[1]]
-            # print("self.mous_down_mode", self.mouse_down_mode)
 
         # Global -- mouse hovering
         self.hover_list = dict()
@@ -144,17 +136,6 @@ class HKHandler:
                 for node_pair, edge in ed.edge_dict.items():
                     if edge.is_hovered(self, offset = ed.offset, scale = ed.scale):
                         self.hover_list[window]["edge"].append(node_pair)
-        # print('self.hover_list', self.hover_list)
-
-
-        # print("dpg.get_item_rect_size(window)", dpg.get_item_rect_size(window))
-        # print(self.hover_list)
-
-
-        # if len(self.mouse) != 0:
-        #     print("mouse", self.mouse)
-        # if len(self.kbd) != 0:
-        #     print("kbd", self.kbd)
 
     def is_hk_active(self, hk: Hotkey):
         if hk.strict:
@@ -176,29 +157,3 @@ class HKHandler:
                 ):
                 return True
         return False
-
-
-
-
-    # mouse_mode = None
-    # mouse_data = None
-    # def drag_handler(sender, app_data):
-    # # editor_register
-    #     if mouse_mode == None:
-    #         # identify the position
-    #         mouse_mode = "pan"
-    #         mouse_data = [0, Vec2.Vec2([app_data[1], app_data[2]])]
-    #     elif mouse_mode == "pan":
-    #         # mouse_data = [register_index, original_mouse_pos]
-    #         (editor_register[mouse_data[0]]
-    #         ).set_camera(main_ed.scale, Vec2.Vec2(mouse_data[1]) - Vec2.Vec2([app_data[1], app_data[2]]))
-    #     # print("sender", sender)
-    #     # print("app_data", app_data)
-
-    # def release_handler(sender, app_data):
-    #     global mouse_mode, mouse_data   
-    #     if mouse_mode == "pan":
-    #         mouse_mode = None
-    #         mouse_data = None
-
-
