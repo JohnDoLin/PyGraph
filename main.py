@@ -87,6 +87,30 @@ def resize_cb():
     # print("w, h of main", dpg.get_item_width("main"), dpg.get_item_height("main"))
     # print("w, h of side_window", dpg.get_item_width("side_window"), dpg.get_item_height("side_window"))
 dpg.set_viewport_resize_callback(callback=resize_cb)
+
+def graph_generator_cb(sender):
+    if sender == "graph_generator_button_1_1":
+        H = nx.star_graph(n=int(dpg.get_value("graph_generator_input_1_1")))
+        EditorRegister.editors["main"].graph = nx.compose(H, EditorRegister.editors["main"].graph)
+    elif sender == "graph_generator_button_1_2":
+        EditorRegister.editors["main"].graph = nx.star_graph(n=int(dpg.get_value("graph_generator_input_1_1")))
+    elif sender == "graph_generator_button_2_1":
+        H = nx.grid_2d_graph(m=int(dpg.get_value("graph_generator_input_2_1")), n=int(dpg.get_value("graph_generator_input_2_1")))
+        EditorRegister.editors["main"].graph = nx.compose(H, EditorRegister.editors["main"].graph)
+    elif sender == "graph_generator_button_2_2":
+        EditorRegister.editors["main"].graph = nx.grid_2d_graph(m=int(dpg.get_value("graph_generator_input_2_1")), n=int(dpg.get_value("graph_generator_input_2_1")))
+    elif sender == "graph_generator_button_3_1":
+        H = nx.cubical_graph()
+        EditorRegister.editors["main"].graph = nx.compose(H, EditorRegister.editors["main"].graph)
+    elif sender == "graph_generator_button_3_2":
+        EditorRegister.editors["main"].graph = nx.cubical_graph()
+    elif sender == "graph_generator_button_4_1":
+        H = nx.random_tree(n=int(dpg.get_value("graph_generator_input_4_1")))
+        EditorRegister.editors["main"].graph = nx.compose(H, EditorRegister.editors["main"].graph)
+    elif sender == "graph_generator_button_4_2":
+        EditorRegister.editors["main"].graph = nx.random_tree(n=int(dpg.get_value("graph_generator_input_4_1")))
+
+    # print(sender)
 ################# GUI #################
 ## GUI::Main ##
 with dpg.window(label="Primary", tag="primary", width = 1000, height=600, no_scrollbar=True, horizontal_scrollbar=False, autosize=False, no_bring_to_front_on_focus=True):
@@ -123,7 +147,7 @@ with dpg.window(label="Primary", tag="primary", width = 1000, height=600, no_scr
                             dpg.add_text(f"Maximum Degree:", bullet=True)
                             dpg.add_text(f"Minimum Degree:", bullet=True)
                     with dpg.tab(label="Queries"):
-                        dpg.add_button(label="Clear All Highlights")
+                        dpg.add_button(label="Clear All Highlights", callback = lambda: {alg.reset_edge(main_ed), alg.reset_node(main_ed)})
                         with dpg.group(horizontal=True):
                             dpg.add_text("Shortest Path from", bullet=True)
                             dpg.add_input_text(width=50)
@@ -131,6 +155,33 @@ with dpg.window(label="Primary", tag="primary", width = 1000, height=600, no_scr
                             dpg.add_input_text(width=50)
                             dpg.add_button(label="Highlight One of the Paths")
                         # dpg.add_button(label="Highlight One of the Paths")
+                    with dpg.tab(label="Graph Generator", tag="graph_generator"):
+                        with dpg.group(horizontal=True):
+                            dpg.add_button(label="Compose", tag="graph_generator_button_1_1", callback=graph_generator_cb)
+                            dpg.add_button(label="Override", tag="graph_generator_button_1_2", callback=graph_generator_cb)
+                            dpg.add_spacer(width=50)
+                            dpg.add_text("Star Graph of Size", bullet=True)
+                            dpg.add_input_int(tag="graph_generator_input_1_1", width=100)
+                        with dpg.group(horizontal=True):
+                            dpg.add_button(label="Compose", tag="graph_generator_button_2_1", callback=graph_generator_cb)
+                            dpg.add_button(label="Override", tag="graph_generator_button_2_2", callback=graph_generator_cb)
+                            dpg.add_spacer(width=50)
+                            dpg.add_text("Lattice Graph of Size", bullet=True)
+                            dpg.add_input_int(tag="graph_generator_input_2_1", width=100)
+                            dpg.add_text("x")
+                            dpg.add_input_int(tag="graph_generator_input_2_2", width=100)
+                        with dpg.group(horizontal=True):
+                            dpg.add_button(label="Compose", tag="graph_generator_button_3_1", callback=graph_generator_cb)
+                            dpg.add_button(label="Override", tag="graph_generator_button_3_2", callback=graph_generator_cb)
+                            dpg.add_spacer(width=50)
+                            dpg.add_text("Cubical Graph", bullet=True)
+                        with dpg.group(horizontal=True):
+                            dpg.add_button(label="Compose", tag="graph_generator_button_4_1", callback=graph_generator_cb)
+                            dpg.add_button(label="Override", tag="graph_generator_button_4_2", callback=graph_generator_cb)
+                            dpg.add_spacer(width=50)
+                            dpg.add_text("Random Tree Graph of Size", bullet=True)
+                            dpg.add_input_int(tag="graph_generator_input_4_1", width=100)
+                        
                 ## GUI::Constants / Control ##
                 with dpg.group():
                     with dpg.tab_bar(label = "Control Tab Bar", tag = "control_bar", reorderable=True):
@@ -164,9 +215,6 @@ with dpg.window(label="Primary", tag="primary", width = 1000, height=600, no_scr
                             dpg.add_text(tag="terminal_result", wrap=600)
                         with dpg.tab(label = "History", tag="history"):
                             dpg.add_text("History of the terminal")
-                        with dpg.tab(label="Graph Generator", tag="graph_generator"):
-                            pass
-
 
 # dpg.toggle_viewport_fullscreen()
 

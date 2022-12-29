@@ -87,7 +87,7 @@ class Editor:
     def add_node(self, node = None, pos = [0,0], **kargs):
         if node not in self.node_dict:
             if node == None or node == 0:
-            # if node == 0:
+            # if node == None:
                 node = str((UUID.uuid4()).int)[:8]
             # if node == 0: node = "0"
             self.node_dict[node] = Node(uuid = node, pos = Vec2(pos), **kargs)
@@ -114,6 +114,11 @@ class Editor:
         dpg.delete_item(self.edge_dict[np].uuid)
         del self.edge_dict[np]
     
+    def clear(self):
+        queue = [node for node in self.node_dict]
+        for node in queue:
+            self.delete_node(node)
+
     def set_node(self, node, **kargs):
         for key in kargs:
             self.node_dict[node].key = kargs[key]
