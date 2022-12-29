@@ -75,7 +75,7 @@ def graph_generator_cb(sender):
         H = nx.grid_2d_graph(m=int(dpg.get_value("graph_generator_input_2_1")), n=int(dpg.get_value("graph_generator_input_2_2")))
         EditorRegister.editors["main"].graph = nx.compose(H, EditorRegister.editors["main"].graph)
     elif sender == "graph_generator_button_2_2":
-        EditorRegister.editors["main"].graph = nx.grid_2d_graph(m=int(dpg.get_value("graph_generator_input_2_1")), n=int(dpg.get_value("graph_generator_input_2_1")))
+        EditorRegister.editors["main"].graph = nx.grid_2d_graph(m=int(dpg.get_value("graph_generator_input_2_1")), n=int(dpg.get_value("graph_generator_input_2_2")))
     elif sender == "graph_generator_button_3_1":
         H = nx.cubical_graph()
         EditorRegister.editors["main"].graph = nx.compose(H, EditorRegister.editors["main"].graph)
