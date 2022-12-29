@@ -75,7 +75,7 @@ class HKHandler:
                 self.kbd.add(key)
 
         # Global -- mouse position
-        print(dpg.get_drawing_mouse_pos(), dpg.get_mouse_pos(local=False))
+        # print(dpg.get_drawing_mouse_pos(), dpg.get_mouse_pos(local=False))
         self.pos = dpg.get_mouse_pos(local=False)
         self.pos = [self.pos[0] - HKHandler.mouse_calibration[0], self.pos[1] - HKHandler.mouse_calibration[1]]
 

@@ -15,13 +15,14 @@ dpg.create_context()
 dpg.create_viewport()
 dpg.setup_dearpygui()
 
-dpg.show_style_editor()
+# dpg.show_style_editor()
 # dpg.show_item_registry()
 
 # dpg.show_debug()
 # dpg.show_metrics()
 
 terminal_rs = ""
+
 ################# Misc Function #################
 def terminal_callback(sender, data):
     global terminal_rs
@@ -61,7 +62,7 @@ def style_cb(sender, data):
         item.style["color"] = tuple(map(lambda x: x*255, data))
     elif sender == "edge_thickness":
         item.style["thickness"] = data
-        
+
     # if hkhandler.selection[1] == "node":
 
     # if sender == "node_color":
@@ -72,15 +73,24 @@ def style_cb(sender, data):
 #     with dpg.add_resize_handler(parent="primary"):
 def resize_cb():
     # print(kargs)
-    dpg.configure_item("main", height=dpg.get_item_height("primary")*0.9, width=dpg.get_item_width("primary")/4*3)
+    w, h = dpg.get_viewport_client_width(), dpg.get_viewport_client_height()
+    dpg.configure_item("main", height=h* 0.95, width=w * 0.5)
+    dpg.configure_item("c1", width=w * 0.4)
+    dpg.configure_item("c2", width=w * 0.4)
+    dpg.configure_item("c3", width=w * 0.4)
+    dpg.configure_item("c4", width=w * 0.4)
+    dpg.configure_item("terminal", width=w * 0.4)
+    dpg.configure_item("terminal_result", wrap=w * 0.4)
     # dpg.configure_item("graph_group", width=dpg.get_item_width("primary")/4)
-    dpg.configure_item("side_window", height=dpg.get_item_height("primary") * 0.9, width=dpg.get_item_width("primary")/5, show=True)
-
-# dpg.set_viewport_resize_callback(callback=resize_cb)
+    # dpg.configure_item("side_window", height=h*0.9, width=w * 0.5)
+    # print("w, h of window", w, h)
+    # print("w, h of main", dpg.get_item_width("main"), dpg.get_item_height("main"))
+    # print("w, h of side_window", dpg.get_item_width("side_window"), dpg.get_item_height("side_window"))
+dpg.set_viewport_resize_callback(callback=resize_cb)
 ################# GUI #################
 ## GUI::Main ##
 with dpg.window(label="Primary", tag="primary", width = 1000, height=600, no_scrollbar=True, horizontal_scrollbar=False, autosize=False, no_bring_to_front_on_focus=True):
-    with dpg.group(horizontal=True, width=dpg.get_item_width("primary")/4*3, tag="graph_group"):
+    with dpg.group(horizontal=True, width=dpg.get_item_width("primary")/2, tag="graph_group"):
         with dpg.tab_bar(label = "Graph View Bar", tag = "view_bar", reorderable=True):
             with dpg.tab(label = "Main View", tag = "main_view"):
                     with dpg.drawlist(label = "Main", tag = "main", width = 600, height = 600, pos = [0, 0]):
@@ -91,10 +101,7 @@ with dpg.window(label="Primary", tag="primary", width = 1000, height=600, no_scr
             # with dpg.group():
                 # with dpg.tab_bar(label = "Style Tab Bar", tag = "style_bar"):
         ## GUI::Info ##
-            with dpg.group():
-                # with dpg.add_listbox()
-            # with dpg.child_window(tag="side_window", ):
-            # with dpg.add_dummy()
+            with dpg.child_window(tag="side_window", no_scrollbar=False, autosize_y=True, autosize_x=True, horizontal_scrollbar=True):
                 with dpg.tab_bar(label = "Info Tab Bar", tag="info_bar", reorderable=True):
                     with dpg.tab(label="Info", tag="info"):
                         dpg.add_text(f"Some Information of this Graph:")
@@ -157,31 +164,34 @@ with dpg.window(label="Primary", tag="primary", width = 1000, height=600, no_scr
                             dpg.add_text(tag="terminal_result", wrap=600)
                         with dpg.tab(label = "History", tag="history"):
                             dpg.add_text("History of the terminal")
+                        with dpg.tab(label="Graph Generator", tag="graph_generator"):
+                            pass
+
 
 # dpg.toggle_viewport_fullscreen()
 
 ################# Editor Register #################
 ed_reg = EditorRegister()
-g = nx.grid_2d_graph(m = 5, n = 5)
+# g = nx.grid_2d_graph(m = 5, n = 5)
 # g = nx.chvatal_graph()
-main_ed = ed_reg.add_editor(window="main", graph = g)
+# main_ed = ed_reg.add_editor(window="main", graph = g)
 
 
 # main_ed.set_camera(0.1, [0, 0])
-# main_ed = ed_reg.add_editor(window="main")
+main_ed = ed_reg.add_editor(window="main")
 
-# main_ed.add_node(0, pos=[0, 0], color = (0, 0, 255))
-# main_ed.add_node(1, pos=[100, 0], color = (0, 0, 255))
-# main_ed.add_node(2, pos=[700, 400], color = (0, 255, 255))
-# main_ed.add_node(3, pos=[300, 500], color = (0, 255, 0))
-# main_ed.add_node(4, pos=[30, 500], color = (255, 255, 0))
-# main_ed.add_node(5, pos=[300, 50], color = (255, 0, 0))
+main_ed.add_node(0, pos=[0, 0], color = (0, 0, 255))
+main_ed.add_node(1, pos=[100, 0], color = (0, 0, 255))
+main_ed.add_node(2, pos=[700, 400], color = (0, 255, 255))
+main_ed.add_node(3, pos=[300, 500], color = (0, 255, 0))
+main_ed.add_node(4, pos=[30, 500], color = (255, 255, 0))
+main_ed.add_node(5, pos=[300, 50], color = (255, 0, 0))
 
-# main_ed.add_edge(3,5)
-# main_ed.add_edge(2,5)
-# main_ed.add_edge(4,5)
-# main_ed.add_edge(3,2)
-# main_ed.add_edge(1,4)
+main_ed.add_edge(3,5)
+main_ed.add_edge(2,5)
+main_ed.add_edge(4,5)
+main_ed.add_edge(3,2)
+main_ed.add_edge(1,4)
 
 # write a piece of code that generates colors?
 
