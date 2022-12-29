@@ -9,8 +9,7 @@ class HKHandler:
     dragging_mouse_btn = dpg.mvMouseButton_Left
     # check EditorRegister.editors
 
-    # mouse_calibration = [8, 12]
-    mouse_calibration = [8, 31]
+    mouse_calibration = [8, 12]
 
     def __init__(self):
         self.mouse = set()
@@ -37,8 +36,6 @@ class HKHandler:
         self.mouse_down_mode = None
         self.mouse_down_data = None
     
-        self.selection = (None, None, None)
-
     def __str__(self):
         return f'''HKHandler(
                             mouse = {self.mouse},
@@ -75,8 +72,9 @@ class HKHandler:
                 self.kbd.add(key)
 
         # Global -- mouse position
-        # print(dpg.get_drawing_mouse_pos(), dpg.get_mouse_pos(local=False))
-        self.pos = dpg.get_mouse_pos(local=False)
+        # self.pos = dpg.get_mouse_pos(local=True)
+        # self.pos = dpg.get_mouse_pos(local=False)
+        self.pos = dpg.get_mouse_pos()
         self.pos = [self.pos[0] - HKHandler.mouse_calibration[0], self.pos[1] - HKHandler.mouse_calibration[1]]
 
         # Global -- mouse keys and press / release

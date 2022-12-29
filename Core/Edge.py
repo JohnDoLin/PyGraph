@@ -17,8 +17,7 @@ class Edge:
         self.updated = updated
         self.created = created
         self.style = {"color": color, "thickness": thickness}
-        self.initial_style={"color": color, "thickness": thickness}
-
+        self.initial_style = {"color": color, "thickness": thickness}
 
     def draw_edge(self, window: str, scale: float = 1, offset: Vec2 = Vec2(0, 0)):
         pos1_array = ((self.start.pos - offset) * scale).to_precision_array(8)

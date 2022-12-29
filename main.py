@@ -22,8 +22,7 @@ dpg.setup_dearpygui()
 # dpg.show_metrics()
 
 terminal_rs = ""
-
-################# Misc Function #################
+################# Terminal Function #################
 def terminal_callback(sender, data):
     global terminal_rs
     old_stdout = sys.stdout
@@ -113,9 +112,9 @@ def graph_generator_cb(sender):
     # print(sender)
 ################# GUI #################
 ## GUI::Main ##
-with dpg.window(label="Primary", tag="primary", width = 1000, height=600, no_scrollbar=True, horizontal_scrollbar=False, autosize=False, no_bring_to_front_on_focus=True):
-    with dpg.group(horizontal=True, width=dpg.get_item_width("primary")/2, tag="graph_group"):
-        with dpg.tab_bar(label = "Graph View Bar", tag = "view_bar", reorderable=True):
+with dpg.window(label="Primary", tag="primary", width = 1000, height=600):
+    with dpg.group(horizontal=True, width=dpg.get_item_width("primary")/4*3):
+        with dpg.tab_bar(label = "Graph View Bar", tag = "view_bar"):
             with dpg.tab(label = "Main View", tag = "main_view"):
                     with dpg.drawlist(label = "Main", tag = "main", width = 600, height = 600, pos = [0, 0]):
                         pass
@@ -220,26 +219,26 @@ with dpg.window(label="Primary", tag="primary", width = 1000, height=600, no_scr
 
 ################# Editor Register #################
 ed_reg = EditorRegister()
-# g = nx.grid_2d_graph(m = 5, n = 5)
+g = nx.grid_2d_graph(m = 3, n = 3)
 # g = nx.chvatal_graph()
-# main_ed = ed_reg.add_editor(window="main", graph = g)
+main_ed = ed_reg.add_editor(window="main", graph = g)
 
 
 # main_ed.set_camera(0.1, [0, 0])
-main_ed = ed_reg.add_editor(window="main")
+# main_ed = ed_reg.add_editor(window="main")
 
-main_ed.add_node(0, pos=[0, 0], color = (0, 0, 255))
-main_ed.add_node(1, pos=[100, 0], color = (0, 0, 255))
-main_ed.add_node(2, pos=[700, 400], color = (0, 255, 255))
-main_ed.add_node(3, pos=[300, 500], color = (0, 255, 0))
-main_ed.add_node(4, pos=[30, 500], color = (255, 255, 0))
-main_ed.add_node(5, pos=[300, 50], color = (255, 0, 0))
+# main_ed.add_node(0, pos=[0, 0], color = (0, 0, 255))
+# main_ed.add_node(1, pos=[100, 0], color = (0, 0, 255))
+# main_ed.add_node(2, pos=[700, 400], color = (0, 255, 255))
+# main_ed.add_node(3, pos=[300, 500], color = (0, 255, 0))
+# main_ed.add_node(4, pos=[30, 500], color = (255, 255, 0))
+# main_ed.add_node(5, pos=[300, 50], color = (255, 0, 0))
 
-main_ed.add_edge(3,5)
-main_ed.add_edge(2,5)
-main_ed.add_edge(4,5)
-main_ed.add_edge(3,2)
-main_ed.add_edge(1,4)
+# main_ed.add_edge(3,5)
+# main_ed.add_edge(2,5)
+# main_ed.add_edge(4,5)
+# main_ed.add_edge(3,2)
+# main_ed.add_edge(1,4)
 
 # write a piece of code that generates colors?
 
@@ -260,7 +259,6 @@ with dpg.handler_registry():
 ################# Main Loop #################
 dpg.show_viewport()
 dpg.set_primary_window("primary", True)
-
 # t0, t1 = time.time()-1, time.time()
 # min_fps = 1000
 # max_lag = 0
