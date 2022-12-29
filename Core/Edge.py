@@ -29,7 +29,12 @@ class Edge:
             self.created = True
 
     def is_hovered(self, hkhandler, offset, scale):
-        if (Vec2(hkhandler.pos)/ scale + offset).dist_to_two_dots(self.start.pos, self.end.pos) <= self.style["thickness"] /2:
+        mouse = (Vec2(hkhandler.pos)/ scale + offset)
+        d = Vec2.dist(self.start.pos, self.end.pos)
+        if (mouse.dist_to_two_dots(self.start.pos, self.end.pos) <= self.style["thickness"] /2
+            and Vec2.dist(mouse, self.start.pos) <= d
+            and Vec2.dist(mouse, self.end.pos) <= d
+            ):
             ## Should be * scale
             return True
         return False
