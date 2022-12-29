@@ -36,7 +36,7 @@ def reset_node(ed, *args): # resets node(s) back to initial style
             reset_node(ed, node)
         return None
     for node in args:
-        ed.node_dict[node].set_style(color = ed.node_dict[node].initial_style["color"], radius = ed.node_dict[node].initial_style["radius"])
+        ed.node_dict[node].set_style(color = ed.node_dict[node].initial_style["color"], radius = ed.node_dict[node].initial_style["radius"], border_width = ed.node_dict[node].initial_style["border_width"], border_color=ed.node_dict[node].initial_style["border_color"])
     return None
 
 def reset_edge(ed, *args): # resets edge(s) back to initial style
@@ -55,6 +55,7 @@ def reset_all(ed): # reset all nodes and edges
             reset_edge(ed, edge)
     return None
 
+
 ## Example Algorithms
 
 visited = set() # Set to keep track of visited nodes of graph.
@@ -69,17 +70,16 @@ def dfs_tree_animation(ed, source, visited = set()):
             time.sleep(0.25)
             dfs_tree_animation(ed, neighbour, visited)
     # visited = set()
-    
 def dijkstra_animation(ed, source, target):
     checked_color = (0, 255, 0)
     checking_color = (0, 0, 255)
     result_color = (255, 0, 0)
-    
+
     hl_node(ed, [source, target])
-    
+
     def dist_sort(node):
         return G.nodes[node]['dist']
-    
+
     G = nx.Graph()
     G.add_nodes_from(ed.graph)
     G.add_edges_from(ed.graph.edges)
@@ -115,16 +115,15 @@ def dijkstra_animation(ed, source, target):
         if len(unvisited) == 0:
             break
         current = unvisited[0]
-        
+
     trace_back = target
     while G.nodes[trace_back]['prev'] != None:
         ed.edge_dict[frozenset([trace_back, G.nodes[trace_back]['prev']])].set_style(color = result_color)
         trace_back = G.nodes[trace_back]['prev']
     ed.node_dict[source].set_style(color = result_color)
     ed.node_dict[target].set_style(color = result_color)
-         
-    return None
 
+    return None
 
 ### distance properties ###
 def dist(ed, source, target): # returns distance between source and target nodes
@@ -199,7 +198,5 @@ def hl_center(ed, hl = node_dfhl): # highlights the center
 def hl_radius(ed, node_hl = node_dfhl, edge_hl = edge_dfhl): # highlights a shortest path whose length is the radius
     hl_eccentricity(ed, center(ed)[0], node_hl, edge_hl)
     return None
-
-    
 
                 

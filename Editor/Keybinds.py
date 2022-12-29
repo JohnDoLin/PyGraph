@@ -1,6 +1,7 @@
 from Editor.Hotkey import Hotkey
 
 down = Hotkey(mouse = {0})
+right_down = Hotkey(mouse = {1})
 down_5 = Hotkey(mouse = {0, 5})
 scroll = Hotkey(wheel = True)
 
@@ -43,6 +44,8 @@ action_dict = {
 
                 "add_edge": [alt_down, alt_release, alt_down_5],
                 "delete_edge": [alt_shift_down, alt_shift_release, alt_shift_down_5],
+                
+                "selection": [right_down],
                 }
 
 

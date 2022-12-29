@@ -22,7 +22,7 @@ dpg.setup_dearpygui()
 # dpg.show_metrics()
 
 terminal_rs = ""
-################# Terminal Function #################
+################# Misc Function #################
 def terminal_callback(sender, data):
     global terminal_rs
     old_stdout = sys.stdout
@@ -61,13 +61,12 @@ def style_cb(sender, data):
         item.style["color"] = tuple(map(lambda x: x*255, data))
     elif sender == "edge_thickness":
         item.style["thickness"] = data
-
+        
     # if hkhandler.selection[1] == "node":
 
     # if sender == "node_color":
         # hkhandler.selection
     # print(sender, data)
-
 # with dpg.handler_registry():
 #     with dpg.add_resize_handler(parent="primary"):
 def resize_cb():
@@ -80,12 +79,12 @@ def resize_cb():
     dpg.configure_item("c4", width=w * 0.4)
     dpg.configure_item("terminal", width=w * 0.4)
     dpg.configure_item("terminal_result", wrap=w * 0.4)
+    # dpg.configure_item("main", height=dpg.get_item_height("primary")*0.9, width=dpg.get_item_width("primary")/4*3)
     # dpg.configure_item("graph_group", width=dpg.get_item_width("primary")/4)
-    # dpg.configure_item("side_window", height=h*0.9, width=w * 0.5)
-    # print("w, h of window", w, h)
-    # print("w, h of main", dpg.get_item_width("main"), dpg.get_item_height("main"))
-    # print("w, h of side_window", dpg.get_item_width("side_window"), dpg.get_item_height("side_window"))
+    # dpg.configure_item("side_window", height=dpg.get_item_height("primary") * 0.9, width=dpg.get_item_width("primary")/5, show=True)
+
 dpg.set_viewport_resize_callback(callback=resize_cb)
+
 
 def graph_generator_cb(sender):
     if sender == "graph_generator_button_1_1":
@@ -109,21 +108,17 @@ def graph_generator_cb(sender):
     elif sender == "graph_generator_button_4_2":
         EditorRegister.editors["main"].graph = nx.random_tree(n=int(dpg.get_value("graph_generator_input_4_1")))
 
-    # print(sender)
 ################# GUI #################
 ## GUI::Main ##
-with dpg.window(label="Primary", tag="primary", width = 1000, height=600):
-    with dpg.group(horizontal=True, width=dpg.get_item_width("primary")/4*3):
-        with dpg.tab_bar(label = "Graph View Bar", tag = "view_bar"):
+with dpg.window(label="Primary", tag="primary", width = 1000, height=600, no_scrollbar=True, horizontal_scrollbar=False, autosize=False, no_bring_to_front_on_focus=True):
+    with dpg.group(horizontal=True, width=dpg.get_item_width("primary")/2, tag="graph_group"):
+        with dpg.tab_bar(label = "Graph View Bar", tag = "view_bar", reorderable=True):
             with dpg.tab(label = "Main View", tag = "main_view"):
                     with dpg.drawlist(label = "Main", tag = "main", width = 600, height = 600, pos = [0, 0]):
                         pass
 
         with dpg.group(horizontal=False, width=dpg.get_item_width("primary")/4):
             ## GUI::Style ##
-            # with dpg.group():
-                # with dpg.tab_bar(label = "Style Tab Bar", tag = "style_bar"):
-        ## GUI::Info ##
             with dpg.child_window(tag="side_window", no_scrollbar=False, autosize_y=True, autosize_x=True, horizontal_scrollbar=True):
                 with dpg.tab_bar(label = "Info Tab Bar", tag="info_bar", reorderable=True):
                     with dpg.tab(label="Info", tag="info"):
@@ -180,7 +175,6 @@ with dpg.window(label="Primary", tag="primary", width = 1000, height=600):
                             dpg.add_spacer(width=50)
                             dpg.add_text("Random Tree Graph of Size", bullet=True)
                             dpg.add_input_int(tag="graph_generator_input_4_1", width=100)
-                        
                 ## GUI::Constants / Control ##
                 with dpg.group():
                     with dpg.tab_bar(label = "Control Tab Bar", tag = "control_bar", reorderable=True):
