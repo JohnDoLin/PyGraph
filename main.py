@@ -4,6 +4,7 @@ from Editor.EditorRegister import EditorRegister
 from Editor.Actions import action_func_dict
 from Editor.Keybinds import action_dict
 import networkx as nx 
+import math
 import Core.algorithms as alg
 from Core.Force import Force
 from threading import Thread
@@ -98,15 +99,19 @@ def update_info():
     dpg.configure_item("info_nodes", items = list(main_ed.graph.nodes))
     dpg.configure_item("info_edges", items = list(main_ed.graph.edges))
 
-    dpg.set_value("info_components_num", nx.number_connected_components(main_ed.graph))
-    dpg.set_value("info_is_connected", nx.is_connected(main_ed.graph))
-    if nx.is_connected(main_ed.graph):
-        dpg.set_value("info_center", nx.center(main_ed.graph))
-        dpg.set_value("info_diameter", nx.diameter(main_ed.graph))
+    if not nx.is_isomorphic(main_ed.graph, nx.null_graph()):
+        dpg.set_value("info_components_num", nx.number_connected_components(main_ed.graph))
+        dpg.set_value("info_is_connected", nx.is_connected(main_ed.graph))
+        if nx.is_connected(main_ed.graph):
+            dpg.set_value("info_center", nx.center(main_ed.graph))
+            dpg.set_value("info_diameter", nx.diameter(main_ed.graph))
     else:
+        dpg.set_value("info_components_num", "-")
+        dpg.set_value("info_is_connected", "-")
         dpg.set_value("info_center", "-")
         dpg.set_value("info_diameter", "-")
-    m, M = 1000000, -1
+    
+    m, M = math.inf, -math.inf
     for i in nx.degree(main_ed.graph):
         if m > i[1]:
             m = i[1]
@@ -118,6 +123,10 @@ def update_info():
 def dijkstra_cb():
     s, t = eval(dpg.get_value("dijkstra_source")), eval(dpg.get_value("dijkstra_target"))
     alg.dijkstra_animation(main_ed, s, t)
+
+def dfs_cb():
+    s = eval(dpg.get_value("dfs_source"))
+    alg.dfs_tree_animation(main_ed, s)
 
 ################# GUI #################
 text_hl_color = (255, 255, 0)
@@ -182,6 +191,10 @@ with dpg.window(label="Primary", tag="primary", width = 1000, height=600, no_scr
                             dpg.add_text("to")
                             dpg.add_input_text(width=50, tag="dijkstra_target")
                             dpg.add_button(label="Show Animation", callback=dijkstra_cb)
+                        with dpg.group(horizontal=True): 
+                            dpg.add_text("DFS from", bullet=True)
+                            dpg.add_input_text(width=50, tag="dfs_source")
+                            dpg.add_button(label="Show Animation", callback=dfs_cb)
                ## GUI::Constants / Control ##
                 with dpg.tab_bar(label = "Control Tab Bar", tag = "control_bar", reorderable=True):
                     with dpg.tab(label = "Style", tag = "style"):

@@ -60,6 +60,9 @@ def reset_all(ed): # reset all nodes and edges
 
 visited = set() # Set to keep track of visited nodes of graph.
 def dfs_tree_animation(ed, source, visited = set()):
+    if not nx.is_tree(ed.graph):
+        print('graph is not a tree')
+        return None
     if source not in visited:
         # print(node)
         visited.add(source)
