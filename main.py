@@ -67,23 +67,48 @@ def resize_cb():
 dpg.set_viewport_resize_callback(callback=resize_cb)
 
 def graph_generator_cb(sender):
+    def mapping_dict(ed, *args):
+        if len(args) == 1:
+            l = [i for i in EditorRegister.editors[ed].graph.nodes if type(i) == int]
+            if l == []: next_label = 0
+            else: next_label = max(l) + 1
+            
+            mapping = {i:i+next_label for i in range(args[0])}
+            
+            return mapping
+        if len(args) == 2:
+            l = [i[2] for i in EditorRegister.editors[ed].graph.nodes if type(i) == tuple and len(i) == 3]
+            if l == []:
+                return {(i, j):(i, j) for i in range(args[0]) for j in range(args[1])}
+            else: 
+                next_label = max(l) + 1
+                return {(i, j):(i, j, next_label) for i in range(args[0]) for j in range(args[1])}
+    
     if sender == "graph_generator_button_1_1":
         H = nx.star_graph(n=int(dpg.get_value("graph_generator_input_1_1")))
+        H = nx.relabel_nodes(H, mapping_dict("main", int(dpg.get_value("graph_generator_input_1_1"))+1))
         EditorRegister.editors["main"].graph = nx.compose(H, EditorRegister.editors["main"].graph)
     elif sender == "graph_generator_button_1_2":
         EditorRegister.editors["main"].graph = nx.star_graph(n=int(dpg.get_value("graph_generator_input_1_1")))
     elif sender == "graph_generator_button_2_1":
         H = nx.grid_2d_graph(m=int(dpg.get_value("graph_generator_input_2_1")), n=int(dpg.get_value("graph_generator_input_2_2")))
+        l = [i for i in EditorRegister.editors["main"].graph.nodes if type(i) == tuple and len(i) == 2]
+        map = {i:i for i in EditorRegister.editors["main"].graph.nodes}
+        for i in l: map[i] = (i[0], i[1], 0)
+        EditorRegister.editors["main"].graph = nx.relabel_nodes(EditorRegister.editors["main"].graph, map)
+        H = nx.relabel_nodes(H, mapping_dict("main", int(dpg.get_value("graph_generator_input_2_1")), int(dpg.get_value("graph_generator_input_2_2"))))
         EditorRegister.editors["main"].graph = nx.compose(H, EditorRegister.editors["main"].graph)
     elif sender == "graph_generator_button_2_2":
         EditorRegister.editors["main"].graph = nx.grid_2d_graph(m=int(dpg.get_value("graph_generator_input_2_1")), n=int(dpg.get_value("graph_generator_input_2_2")))
     elif sender == "graph_generator_button_3_1":
         H = nx.cubical_graph()
+        H = nx.relabel_nodes(H, mapping_dict("main", 8))
         EditorRegister.editors["main"].graph = nx.compose(H, EditorRegister.editors["main"].graph)
     elif sender == "graph_generator_button_3_2":
         EditorRegister.editors["main"].graph = nx.cubical_graph()
     elif sender == "graph_generator_button_4_1":
         H = nx.random_tree(n=int(dpg.get_value("graph_generator_input_4_1")))
+        H = nx.relabel_nodes(H, mapping_dict("main", int(dpg.get_value("graph_generator_input_4_1"))))
         EditorRegister.editors["main"].graph = nx.compose(H, EditorRegister.editors["main"].graph)
     elif sender == "graph_generator_button_4_2":
         EditorRegister.editors["main"].graph = nx.random_tree(n=int(dpg.get_value("graph_generator_input_4_1")))
