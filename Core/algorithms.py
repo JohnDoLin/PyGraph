@@ -20,7 +20,7 @@ def hl_node(ed, nodes, hl:tuple = node_dfhl): # highlights a node, or nodes in a
         ed.node_dict[nodes].set_style(color = hl)
     return None
     
-def hl_edge(ed, edges, hl:tuple = node_dfhl): # highlights an edge, or edges in a list
+def hl_edge(ed, edges, hl:tuple = edge_dfhl): # highlights an edge, or edges in a list
     if type(edges) == list:
         for edge in edges:
             edge = frozenset({edge[0], edge[1]})
