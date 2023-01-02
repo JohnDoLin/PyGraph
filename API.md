@@ -4,7 +4,7 @@ The following are API we implemented.
 ## Editors
 
 ``` python
-ed_reg.add_editor(window: str = *window*, graph: nx.Graph = *graph*)
+ed_reg.add_editor(window: str = window, graph: nx.Graph = graph)
 ```
 Create a new editor (This is not recommended to use since we don't support multiple graoh views).
 
